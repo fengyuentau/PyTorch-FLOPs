@@ -14,7 +14,7 @@ from itertools import repeat
 def _ntuple(n):
     def parse(x):
         if isinstance(x, container_abcs.Iterable):
-            x_cast = tuple(len(x))
+            x_cast = tuple()
             for _x in x:
                 if not isinstance(_x, int):
                     _x = dtype(_x)

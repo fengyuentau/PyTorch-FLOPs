@@ -1,4 +1,6 @@
-class ReLU(object):
+from .module import Module
+
+class ReLU(Module):
     def __init__(self,
         inplace=False):
 
@@ -6,12 +8,19 @@ class ReLU(object):
 
         self.inplace = inplace
 
-    def _get_flops(self, x, y):
+    def __repr__(self):
+        base = 'ReLU('
+        if self.inplace != False:
+            base += 'inplace={:s}'.format(str(self.inplace))
+        base += ')'
+        return base
+
+    def _calc_flops(self, x, y):
         cin, hin, win = x
         cout, hout, wout = y
-        return 2 * (cout * hout * wout)
+        self._flops = 2 * (cout * hout * wout)
 
-    def __call__(self, x):
+    def forward(self, x):
         '''
         x should be of shape [channels, height, width]
         '''
@@ -19,20 +28,25 @@ class ReLU(object):
 
         y = [i for i in x]
 
-        flops = self._get_flops(x, y)
+        self._calc_flops(x, y)
 
-        return y, flops
+        return y
 
-class Sigmoid(object):
+class Sigmoid(Module):
     def __init__(self):
         super(Sigmoid, self).__init__()
 
-    def _get_flops(self, x, y):
+    def __repr__(self):
+        base = 'Sigmoid('
+        base += ')'
+        return base
+
+    def _calc_flops(self, x, y):
         cin, hin, win = x
         cout, hout, wout = y
-        return 3 * (cout * hout * wout)
+        self._flops = 3 * (cout * hout * wout)
 
-    def __call__(self, x):
+    def forward(self, x):
         '''
         x should be of shape [channels, height, width]
         '''
@@ -40,6 +54,6 @@ class Sigmoid(object):
 
         y = [i for i in x]
 
-        flops = self._get_flops(x, y)
+        self._calc_flops(x, y)
 
-        return y, flops
+        return y

@@ -1,37 +1,51 @@
-class EltAdd(object):
+from .module import Module
+
+class EltAdd(Module):
     def __init__(self):
         super(EltAdd, self).__init__()
 
-    def _get_flops(self, x, y):
+    def __repr__(self):
+        base = 'EltAdd('
+        base += ')'
+        return base
+
+    def _calc_flops(self, x, y):
         cin, hin, win = x
         cout, hout, wout = y
-        return cout * hout * wout
+        self._flops = cout * hout * wout
 
-    def __call__(self, a, b):
+    def forward(self, a, b):
         assert len(a) == len(b), 'Dimension of a and b must be equal.'
         assert a == b, 'Size of a and b must be equal.'
 
-        y = a
+        x = [i for i in a]
+        y = [i for i in a]
 
-        flops = self._get_flops(a, y)
+        self._calc_flops(x, y)
 
-        return y, flops
+        return y
 
-class EltMul(object):
+class EltMul(Module):
     def __init__(self):
         super(EltMul, self).__init__()
 
-    def _get_flops(self, x, y):
+    def __repr__(self):
+        base = 'EltMul('
+        base += ')'
+        return base
+
+    def _calc_flops(self, x, y):
         cin, hin, win = x
         cout, hout, wout = y
-        return cout * hout * wout
+        self._flops = cout * hout * wout
 
-    def __call__(self, a, b):
+    def forward(self, a, b):
         assert len(a) == len(b), 'Dimension of a and b must be equal.'
         assert a == b, 'Size of a and b must be equal.'
 
-        y = a
+        x = [i for i in a]
+        y = [i for i in a]
 
-        flops = self._get_flops(a, y)
+        self._calc_flops(x, y)
 
-        return y, flops
+        return y

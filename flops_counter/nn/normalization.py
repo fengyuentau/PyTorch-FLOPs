@@ -1,4 +1,6 @@
-class BatchNorm2d(object):
+from .module import Module
+
+class BatchNorm2d(Module):
     def __init__(self,
         num_features: int,
         eps: float=1e-05,
@@ -14,12 +16,25 @@ class BatchNorm2d(object):
         self.affine = affine
         self.track_running_stats = track_running_stats
 
-    def _get_flops(self, x, y):
+    def __repr__(self):
+        base = 'BatchNorm2d(num_features={:d}'.format(self.num_features)
+        if self.eps != 1e-05:
+            base += ', eps={:e}'.format(self.eps)
+        if self.momentum != 0.1:
+            base += ', momentum={:f}'.format(self.momentum)
+        if self.affine != True:
+            base += ', affine={:s}'.format(str(self.affine))
+        if self.track_running_stats != True:
+            base += ', track_running_stats={:s}'.format(str(self.track_running_stats))
+        base += ')'
+        return base
+
+    def _calc_flops(self, x, y):
         cin, hin, win = x
         cout, hout, wout = y
-        return 6 * (cout * hout * wout)
+        self._flops = 6 * (cout * hout * wout)
 
-    def __call__(self, x):
+    def forward(self, x):
         '''
         x should be of shape [channels, height, width]
         '''
@@ -28,11 +43,11 @@ class BatchNorm2d(object):
 
         y = [i for i in x]
 
-        flops = self._get_flops(x, y)
+        self._calc_flops(x, y)
 
         return y, flops
 
-class L2Norm2d(object):
+class L2Norm2d(Module):
     def __init__(self,
         num_features: int,
         gamma_init: int=20):
@@ -42,12 +57,19 @@ class L2Norm2d(object):
         self.num_features = num_features
         self.gamma_init = gamma_init
 
-    def _get_flops(self, x, y):
+    def __repr__(self):
+        base = 'L2Norm2d(num_features={:d}'.format(self.num_features)
+        if self.gamma_init != 20:
+            base += ', gamma_init={:d}'.format(self.gamma_init)
+        base += ')'
+        return base
+
+    def _calc_flops(self, x, y):
         cin, hin, win = x
         cout, hout, wout = y
-        return 3 * (cout * hout * wout)
+        self._flops = 3 * (cout * hout * wout)
 
-    def __call__(self, x):
+    def forward(self, x):
         '''
         x should be of shape [channels, height, width]
         '''
@@ -56,6 +78,6 @@ class L2Norm2d(object):
 
         y = [i for i in x]
 
-        flops = self._get_flops(x, y)
+        self._calc_flops(x, y)
 
         return y, flops

@@ -1,6 +1,8 @@
 from ._utils import _pair
 
-class Conv2d(object):
+from .module import Module
+
+class Conv2d(Module):
     def __init__(self,
         in_channels: int,
         out_channels: int,
@@ -26,7 +28,7 @@ class Conv2d(object):
         self.bias           = bias
         self.padding_mode   = padding_mode
 
-    def __str__(self):
+    def __repr__(self):
         base = 'Conv2d({:d}, {:d}, kernel_size={:s}'.format(self.in_channels, self.out_channels, str(self.kernel_size))
         if self.stride != (1, 1):
             base += ', stride={:s}'.format(str(self.stride))
@@ -43,15 +45,15 @@ class Conv2d(object):
         base += ')'
         return base
 
-    def _out(self, i, idx):
+    def _calc_out(self, i, idx):
         return (i + 2 * self.padding[idx] - self.dilation[idx] * (self.kernel_size[idx] - 1) - 1) // self.stride[idx] + 1
 
-    def _get_flops(self, x, y):
+    def _calc_flops(self, x, y):
         cin, hin, win = x
         cout, hout, wout = y
-        return (2 * cin * self.kernel_size[0] * self.kernel_size[1] - (0 if self.bias else 1)) * (cout // self.groups) * hout * wout
+        self._flops = (2 * cin * self.kernel_size[0] * self.kernel_size[1] - (0 if self.bias else 1)) * (cout // self.groups) * hout * wout
 
-    def __call__(self, x):
+    def forward(self, x):
         '''
         x should be of shape [channels, height, width]
         '''
@@ -59,16 +61,16 @@ class Conv2d(object):
         assert x[0] == self.in_channels, 'The channel of input {:d} does not match with the definition {:d}'.format(x[0], self.in_channels)
 
         cin, hin, win = x
-        hout = self._out(hin, 0)
-        wout = self._out(win, 1)
+        hout = self._calc_out(hin, 0)
+        wout = self._calc_out(win, 1)
         y = [self.out_channels, hout, wout]
 
-        flops = self._get_flops(x, y)
+        self._calc_flops(x, y)
 
-        return y, flops
+        return y
 
 
-class ConvTranspose2d(object):
+class ConvTranspose2d(Module):
     def __init__(self,
         in_channels: int,
         out_channels: int,
@@ -94,7 +96,7 @@ class ConvTranspose2d(object):
         self.dilation       = _pair(dilation)
         self.padding_mode   = padding_mode
 
-    def __str__(self):
+    def __repr__(self):
         base = 'ConvTranspose2d({:d}, {:d}, kernel_size={:s}'.format(self.in_channels, self.out_channels, str(self.kernel_size))
         if self.stride != (1, 1):
             base += ', stride={:s}'.format(str(self.stride))
@@ -113,15 +115,15 @@ class ConvTranspose2d(object):
         base += ')'
         return base
 
-    def _out(self, i, idx):
+    def _calc_out(self, i, idx):
         return (i - 1) * self.stride[idx] - 2 * self.padding[idx] + self.dilation[idx] * (self.kernel_size[idx] - 1) + self.output_padding[idx] + 1
 
-    def _get_flops(self, x, y):
+    def _calc_flops(self, x, y):
         cin, hin, win = x
         cout, hout, wout = y
-        return (2 * cin * self.kernel_size[0] * self.kernel_size[1] - (0 if self.bias else 1)) * (cout // self.groups) * (hout * wout - self.output_padding[0] * self.output_padding[1])
+        self._flops = (2 * cin * self.kernel_size[0] * self.kernel_size[1] - (0 if self.bias else 1)) * (cout // self.groups) * (hout * wout - self.output_padding[0] * self.output_padding[1])
 
-    def __call__(self, x):
+    def forward(self, x):
         '''
         x should be of shape [channels, height, width]
         '''
@@ -129,10 +131,10 @@ class ConvTranspose2d(object):
         assert x[0] == self.in_channels, 'The channel of input {:d} does not match with the definition {:d}'.format(x[0], self.in_channels)
 
         cin, hin, win = x
-        hout = self._out(hin, 0)
-        wout = self._out(win, 1)
+        hout = self._calc_out(hin, 0)
+        wout = self._calc_out(win, 1)
         y = [self.out_channels, hout, wout]
 
-        flops = self._get_flops(x, y)
+        self._calc_flops(x, y)
 
-        return y, flops
+        return y

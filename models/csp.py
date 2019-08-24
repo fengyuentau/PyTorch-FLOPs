@@ -6,6 +6,8 @@ import flops_counter.nn as nn
 
 class IdentityBlock(object):
     def __init__(self, in_channels, out_channels, kernel_size, stride=1, padding=0, dilation=1):
+        # self.as_super = super(IdentityBlock, self)
+        # self.as_super.__init__()
         super(IdentityBlock, self).__init__()
 
         out_channels_1, out_channels_2, out_channels_3 = out_channels//4, out_channels//4, out_channels
@@ -28,7 +30,7 @@ class IdentityBlock(object):
         flops = int(0)
         identity = x
 
-        out, flops_t = self.conv1(out)
+        out, flops_t = self.conv1(x)
         flops += flops_t
         out, flops = self.bn1(out)
         flops += flops_t
@@ -56,7 +58,7 @@ class IdentityBlock(object):
 
 class ConvBlock(object):
     def __init__(self, in_channels, out_channels, kernel_size, stride=1, padding=0, dilation=1):
-        super(IdentityBlock, self).__init__()
+        super(ConvBlock, self).__init__()
 
         out_channels_1, out_channels_2, out_channels_3 = out_channels//4, out_channels//4, out_channels
 
@@ -81,7 +83,7 @@ class ConvBlock(object):
         flops = int(0)
         identity = x
 
-        out, flops_t = self.conv1(out)
+        out, flops_t = self.conv1(x)
         flops += flops_t
         out, flops_t = self.bn1(out)
         flops += flops_t
@@ -247,7 +249,7 @@ class CSP(object):
         flops += flops_t
 
         # concat
-        conc = flops_counter.cat((p3up, p4up, p5up), 1)
+        conc = flops_counter.cat((p3up, p4up, p5up), 0)
 
         # detection head - feat
         feat, flops_t = self.feat_conv(conc)

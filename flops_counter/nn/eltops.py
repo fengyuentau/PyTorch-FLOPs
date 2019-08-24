@@ -14,9 +14,12 @@ class EltAdd(Module):
         cout, hout, wout = y
         self._flops = cout * hout * wout
 
-    def forward(self, a, b):
-        assert len(a) == len(b), 'Dimension of a and b must be equal.'
-        assert a == b, 'Size of a and b must be equal.'
+    def forward(self, a, b=None):
+        if b is not None:
+            assert len(a) == len(b), 'Dimension of a and b must be equal.'
+            assert a == b, 'Size of a and b must be equal.'
+        else:
+            b = a
 
         x = [i for i in a]
         y = [i for i in a]
@@ -39,9 +42,12 @@ class EltMul(Module):
         cout, hout, wout = y
         self._flops = cout * hout * wout
 
-    def forward(self, a, b):
-        assert len(a) == len(b), 'Dimension of a and b must be equal.'
-        assert a == b, 'Size of a and b must be equal.'
+    def forward(self, a, b=None):
+        if b is not None:
+            assert len(a) == len(b), 'Dimension of a and b must be equal.'
+            assert a == b, 'Size of a and b must be equal.'
+        else:
+            b = a
 
         x = [i for i in a]
         y = [i for i in a]

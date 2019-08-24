@@ -22,3 +22,24 @@ class ReLU(object):
         flops = self._get_flops(x, y)
 
         return y, flops
+
+class Sigmoid(object):
+    def __init__(self):
+        super(Sigmoid, self).__init__()
+
+    def _get_flops(self, x, y):
+        cin, hin, win = x
+        cout, hout, wout = y
+        return 3 * (cout * hout * wout)
+
+    def __call__(self, x):
+        '''
+        x should be of shape [channels, height, width]
+        '''
+        assert len(x) == 3, 'input size should be 3, which is [channels, height, width].'
+
+        y = [i for i in x]
+
+        flops = self._get_flops(x, y)
+
+        return y, flops

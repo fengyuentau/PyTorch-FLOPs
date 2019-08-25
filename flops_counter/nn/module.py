@@ -30,8 +30,7 @@ class Module(object):
                     'cannot assign module before Module.__init__() call')
             remove_from(self.__dict__)
             modules[name] = value
-        else:
-            object.__setattr__(self, name, value)
+        object.__setattr__(self, name, value)
 
     @property
     def flops(self):

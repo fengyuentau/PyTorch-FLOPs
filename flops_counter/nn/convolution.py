@@ -43,6 +43,8 @@ class Conv2d(Module):
         if self.padding_mode != 'zeros':
             base += ', padding_mode={:s}'.format(self.padding_mode)
         base += ')'
+        if self._flops != 0:
+            base += ', FLOPs = {:,d}'.format(self._flops)
         return base
 
     def _calc_out(self, i, idx):
@@ -113,6 +115,8 @@ class ConvTranspose2d(Module):
         if self.padding_mode != 'zeros':
             base += ', padding_mode={:s}'.format(self.padding_mode)
         base += ')'
+        if self._flops != 0:
+            base += ', FLOPs = {:,d}'.format(self._flops)
         return base
 
     def _calc_out(self, i, idx):

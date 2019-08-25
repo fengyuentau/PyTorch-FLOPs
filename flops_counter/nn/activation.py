@@ -13,6 +13,8 @@ class ReLU(Module):
         if self.inplace != False:
             base += 'inplace={:s}'.format(str(self.inplace))
         base += ')'
+        if self._flops != 0:
+            base += ', FLOPs = {:,d}'.format(self._flops)
         return base
 
     def _calc_flops(self, x, y):
@@ -39,6 +41,8 @@ class Sigmoid(Module):
     def __repr__(self):
         base = 'Sigmoid('
         base += ')'
+        if self._flops != 0:
+            base += ', FLOPs = {:,d}'.format(self._flops)
         return base
 
     def _calc_flops(self, x, y):

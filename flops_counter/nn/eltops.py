@@ -7,6 +7,8 @@ class EltAdd(Module):
     def __repr__(self):
         base = 'EltAdd('
         base += ')'
+        if self._flops != 0:
+            base += ', FLOPs = {:,d}'.format(self._flops)
         return base
 
     def _calc_flops(self, x, y):
@@ -35,6 +37,8 @@ class EltMul(Module):
     def __repr__(self):
         base = 'EltMul('
         base += ')'
+        if self._flops != 0:
+            base += ', FLOPs = {:,d}'.format(self._flops)
         return base
 
     def _calc_flops(self, x, y):

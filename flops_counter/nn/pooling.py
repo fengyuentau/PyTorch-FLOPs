@@ -33,6 +33,8 @@ class MaxPool2d(Module):
         if self.ceil_mode != False:
             base += ', ceil_mode={:s}'.format(self.ceil_mode)
         base += ')'
+        if self._flops != 0:
+            base += ', FLOPs = {:,d}'.format(self._flops)
         return base
 
     def _calc_out(self, i, idx):

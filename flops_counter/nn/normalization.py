@@ -27,6 +27,8 @@ class BatchNorm2d(Module):
         if self.track_running_stats != True:
             base += ', track_running_stats={:s}'.format(str(self.track_running_stats))
         base += ')'
+        if self._flops != 0:
+            base += ', FLOPs = {:,d}'.format(self._flops)
         return base
 
     def _calc_flops(self, x, y):
@@ -62,6 +64,8 @@ class L2Norm2d(Module):
         if self.gamma_init != 20:
             base += ', gamma_init={:d}'.format(self.gamma_init)
         base += ')'
+        if self._flops != 0:
+            base += ', FLOPs = {:,d}'.format(self._flops)
         return base
 
     def _calc_flops(self, x, y):

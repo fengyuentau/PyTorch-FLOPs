@@ -36,6 +36,8 @@ class Upsample(Module):
         if self.align_corners:
             base += ', align_corners={:s}'.format(str(self.align_corners))
         base += ')'
+        if self._flops != 0:
+            base += ', FLOPs = {:,d}'.format(self._flops)
         return base
 
     def _calc_flops(self, x, y):

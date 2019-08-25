@@ -56,4 +56,4 @@ class MaxPool2d(Module):
 
         self._calc_flops(x, y)
 
-        return y, flops
+        return y

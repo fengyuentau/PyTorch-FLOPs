@@ -1,3 +1,5 @@
+import flops_counter
+
 from collections import OrderedDict
 
 def _addindent(s_, numSpaces):
@@ -84,7 +86,3 @@ class Module(object):
             if module is not None and isinstance(module, Module):
                 self._flops += module._flops
         return self._flops
-
-    @property
-    def name(self):
-        return self.__class__.__name__

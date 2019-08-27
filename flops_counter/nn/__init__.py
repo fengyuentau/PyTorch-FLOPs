@@ -5,6 +5,7 @@ from .normalization import BatchNorm2d, L2Norm2d
 from .pooling import MaxPool2d, AdaptiveAvgPool2d
 from .eltops import EltAdd, EltMul
 from .linear import Linear
+from .upsample import Upsample
 
 
 __all__ = [
@@ -14,5 +15,6 @@ __all__ = [
     'BatchNorm2d', 'L2Norm2d',
     'MaxPool2d', 'AdaptiveAvgPool2d',
     'EltAdd', 'EltMul',
-    'Linear'
+    'Linear',
+    'Upsample'
 ]

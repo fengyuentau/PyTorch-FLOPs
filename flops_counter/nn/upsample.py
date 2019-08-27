@@ -11,8 +11,10 @@ class Upsample(Module):
         mode='nearest',
         align_corners=None):
 
-        assert isinstance(size, tuple) and len(size) == 2, 'Size must be a 2-element tuple.'
-        assert size or scale_factor, 'Only one of size and scale_factor can be specify.'
+        assert (size is not None and scale_factor is None) or (size is None and scale_factor is not None), \
+            'Only one of size and scale_factor can be specify.'
+        if size is not None:
+            assert isinstance(size, tuple) and len(size) == 2, 'Size must be a 2-element tuple.'
         assert mode.lower() == 'bilinear', 'Currently only support Upsample with bilinear mode.'
 
         super(Upsample, self).__init__()
@@ -25,20 +27,17 @@ class Upsample(Module):
         self.mode = mode
         self.align_corners = align_corners
 
-    def __repr__(self):
-        base = 'Upsample('
-        if self.size:
-            base += ', size={:s}'.format(str(self.size))
-        if self.scale_factor:
-            base += ', scale_factor={:s}'.format(str(self.scale_factor))
+    def extra_repr(self):
+        parameters = ''
+        if self.size is not None:
+            parameters += 'size={size}, '
+        if self.scale_factor is not None:
+            parameters += 'scale_factor={scale_factor}, '
         if self.mode != 'nearest':
-            base += ', mode={:s}'.format(str(self.mode))
-        if self.align_corners:
-            base += ', align_corners={:s}'.format(str(self.align_corners))
-        base += ')'
-        if self._flops != 0:
-            base += ', FLOPs = {:,d}'.format(self._flops)
-        return base
+            parameters += 'mode={mode}'
+        if self.align_corners is not None:
+            parameters += ', align_corners={align_corners}'
+        return parameters.format(**self.__dict__)
 
     def _calc_flops(self, x, y):
         cin, hin, win = x

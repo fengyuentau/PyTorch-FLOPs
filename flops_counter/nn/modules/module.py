@@ -98,6 +98,10 @@ class Module(object):
 
     @property
     def flops(self):
+        # print(bool(self._modules))
+        if not bool(self._modules):
+            return self._flops
+
         if self._flops != 0:
             self._flops = int(0)
         for name, module in self._modules.items():

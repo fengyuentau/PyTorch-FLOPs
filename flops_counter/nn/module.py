@@ -29,6 +29,21 @@ class Module(object):
         result = self.forward(*input, **kwargs)
         return result
 
+    def add_module(self, name, module):
+        if not isinstance(module, Module) and module is not None:
+            raise TypeError('{} is not a Module subclass'.format(
+                flops_counter.typename(module)))
+        elif not isinstance(name, flops_counter.string_classes):
+            raise TypeError('module name should be a string. Got {}'.format(
+                flops_counter.typename(name)))
+        elif hasattr(self, name) and name not in self._modules:
+            raise KeyError('attribute \'{}\' already exists'.format(name))
+        elif '.' in name:
+            raise KeyError('module name can\'t contain "."')
+        elif name == '':
+            raise KeyError('module name can\'t be empty string ""')
+        self._modules[name] = module
+
     def __setattr__(self, name, value):
         def remove_from(dicts):
             for d in dicts:
@@ -76,6 +91,9 @@ class Module(object):
             else:
                 main_str += '\n  ' + '\n  '.join(lines) + '\n'
         main_str += ')'
+
+        if self._flops != 0:
+            main_str += ', FLOPs = {:,d}'.format(self._flops)
         return main_str
 
     @property

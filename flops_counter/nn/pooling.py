@@ -3,6 +3,9 @@ from ._utils import _pair
 from .module import Module
 
 class MaxPool2d(Module):
+    __constants__ = ['kernel_size', 'stride', 'padding', 'dilation',
+                     'return_indices', 'ceil_mode']
+
     def __init__(self,
         kernel_size,
         stride=1,
@@ -20,22 +23,19 @@ class MaxPool2d(Module):
         self.return_indices = return_indices
         self.ceil_mode = ceil_mode
 
-    def __repr__(self):
-        base = 'MaxPool2d(kernel_size={:s}'.format(str(self.kernel_size))
+    def extra_repr(self):
+        parameters = 'kernel_size={kernel_size}'
         if self.stride != (1, 1):
-            base += ', stride={:s}'.format(str(self.stride))
+            parameters += ', stride={stride}'
         if self.padding != (0, 0):
-            base += ', padding={:s}'.format(str(self.padding))
+            parameters += ', padding={padding}'
         if self.dilation != (1, 1):
-            base += ', dilation={:s}'.format(str(self.dilation))
+            parameters += ', dilation={dilation}'
         if self.return_indices != False:
-            base += ', return_indices={:s}'.format(str(self.return_indices))
+            parameters += ', return_indices={return_indices}'
         if self.ceil_mode != False:
-            base += ', ceil_mode={:s}'.format(self.ceil_mode)
-        base += ')'
-        if self._flops != 0:
-            base += ', FLOPs = {:,d}'.format(self._flops)
-        return base
+            parameters += ', ceil_mode={ceil_mode}'
+        return parameters.format(**self.__dict__)
 
     def _calc_out(self, i, idx):
         return (i + 2 * self.padding[idx] - self.dilation[idx] * (self.kernel_size[idx] - 1) - 1) // self.stride[idx] + 1
@@ -57,5 +57,35 @@ class MaxPool2d(Module):
         y = [cin, hout, wout]
 
         self._calc_flops(x, y)
+
+        return y
+
+class AdaptiveAvgPool2d(Module):
+    __constants__ = ['output_size']
+    def __init__(self, output_size):
+        super(AdaptiveAvgPool2d, self).__init__()
+        self.output_size = _pair(output_size)
+
+    def extra_repr(self):
+        return 'output_size={output_size}'.format(**self.__dict__)
+
+    def _calc_out(self, i, idx):
+        return self.output_size[idx]
+
+    def _calc_flops(self, x, y):
+        raise NotImplementedError
+
+    def forward(self, x):
+        '''
+        x should be of shape [channels, height, width]
+        '''
+        assert len(x) == 3, 'input size should be 3, which is [channels, height, width].'
+
+        cin, hin, win = x
+        hout = self._calc_out(hin, 0)
+        wout = self._calc_out(win, 1)
+        y = [cin, hout, wout]
+
+        # self._calc_flops(x, y)
 
         return y

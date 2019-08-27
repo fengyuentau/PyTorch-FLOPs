@@ -156,7 +156,7 @@ class CSP(nn.Module):
 
     @property
     def name(self):
-        return self._get_name + '_ResNet50'
+        return self._get_name() + '_ResNet50'
 
     def forward(self, x):
         # base

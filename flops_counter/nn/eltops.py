@@ -4,13 +4,6 @@ class EltAdd(Module):
     def __init__(self):
         super(EltAdd, self).__init__()
 
-    def __repr__(self):
-        base = 'EltAdd('
-        base += ')'
-        if self._flops != 0:
-            base += ', FLOPs = {:,d}'.format(self._flops)
-        return base
-
     def _calc_flops(self, x, y):
         cin, hin, win = x
         cout, hout, wout = y
@@ -33,13 +26,6 @@ class EltAdd(Module):
 class EltMul(Module):
     def __init__(self):
         super(EltMul, self).__init__()
-
-    def __repr__(self):
-        base = 'EltMul('
-        base += ')'
-        if self._flops != 0:
-            base += ', FLOPs = {:,d}'.format(self._flops)
-        return base
 
     def _calc_flops(self, x, y):
         cin, hin, win = x

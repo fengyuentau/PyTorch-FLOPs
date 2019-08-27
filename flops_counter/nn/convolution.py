@@ -28,24 +28,21 @@ class Conv2d(Module):
         self.bias           = bias
         self.padding_mode   = padding_mode
 
-    def __repr__(self):
-        base = 'Conv2d({:d}, {:d}, kernel_size={:s}'.format(self.in_channels, self.out_channels, str(self.kernel_size))
+    def extra_repr(self):
+        parameters = '{in_channels}, {out_channels}, kernel_size={kernel_size}'
         if self.stride != (1, 1):
-            base += ', stride={:s}'.format(str(self.stride))
+            parameters += ', stride={stride}'
         if self.padding != (0, 0):
-            base += ', padding={:s}'.format(str(self.padding))
+            parameters += ', padding={padding}'
         if self.dilation != (1, 1):
-            base += ', dilation={:s}'.format(str(self.dilation))
+            parameters += ', dilation={dilation}'
         if self.groups != 1:
-            base += ', groups={:s}'.format(self.groups)
+            parameters += ', groups={groups}'
         if self.bias != True:
-            base += ', bias={:s}'.format(str(self.bias))
+            parameters += ', bias={bias}'
         if self.padding_mode != 'zeros':
-            base += ', padding_mode={:s}'.format(self.padding_mode)
-        base += ')'
-        if self._flops != 0:
-            base += ', FLOPs = {:,d}'.format(self._flops)
-        return base
+            parameters += ', padding_mode={padding_mode}'
+        return parameters.format(**self.__dict__)
 
     def _calc_out(self, i, idx):
         return (i + 2 * self.padding[idx] - self.dilation[idx] * (self.kernel_size[idx] - 1) - 1) // self.stride[idx] + 1
@@ -98,26 +95,23 @@ class ConvTranspose2d(Module):
         self.dilation       = _pair(dilation)
         self.padding_mode   = padding_mode
 
-    def __repr__(self):
-        base = 'ConvTranspose2d({:d}, {:d}, kernel_size={:s}'.format(self.in_channels, self.out_channels, str(self.kernel_size))
+    def extra_repr(self):
+        parameters = '{in_channels}, {out_channels}, kernel_size={kernel_size}'
         if self.stride != (1, 1):
-            base += ', stride={:s}'.format(str(self.stride))
+            parameters += ', stride={stride}'
         if self.padding != (0, 0):
-            base += ', padding={:s}'.format(str(self.padding))
+            parameters += ', padding={padding}'
         if self.output_padding != (0, 0):
-            base += ', output_padding={:s}'.format(str(self.output_padding))
+            parameters += ', output_padding={output_padding}'
         if self.groups != 1:
-            base += ', groups={:s}'.format(self.groups)
+            parameters += ', groups={groups}'
         if self.bias != True:
-            base += ', bias={:s}'.format(str(self.bias))
+            parameters += ', bias={bias}'
         if self.dilation != (1, 1):
-            base += ', dilation={:s}'.format(str(self.dilation))
+            parameters += ', dilation={dilation}'
         if self.padding_mode != 'zeros':
-            base += ', padding_mode={:s}'.format(self.padding_mode)
-        base += ')'
-        if self._flops != 0:
-            base += ', FLOPs = {:,d}'.format(self._flops)
-        return base
+            parameters += ', padding_mode={padding_mode}'
+        return parameters.format(**self.__dict__)
 
     def _calc_out(self, i, idx):
         return (i - 1) * self.stride[idx] - 2 * self.padding[idx] + self.dilation[idx] * (self.kernel_size[idx] - 1) + self.output_padding[idx] + 1

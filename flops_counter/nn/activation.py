@@ -8,14 +8,11 @@ class ReLU(Module):
 
         self.inplace = inplace
 
-    def __repr__(self):
-        base = 'ReLU('
+    def extra_repr(self):
+        parameters = ''
         if self.inplace != False:
-            base += 'inplace={:s}'.format(str(self.inplace))
-        base += ')'
-        if self._flops != 0:
-            base += ', FLOPs = {:,d}'.format(self._flops)
-        return base
+            parameters += 'inplace={inplace}'
+        return parameters.format(**self.__dict__)
 
     def _calc_flops(self, x, y):
         cin, hin, win = x
@@ -38,12 +35,6 @@ class Sigmoid(Module):
     def __init__(self):
         super(Sigmoid, self).__init__()
 
-    def __repr__(self):
-        base = 'Sigmoid('
-        base += ')'
-        if self._flops != 0:
-            base += ', FLOPs = {:,d}'.format(self._flops)
-        return base
 
     def _calc_flops(self, x, y):
         cin, hin, win = x

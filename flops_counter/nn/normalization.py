@@ -16,20 +16,17 @@ class BatchNorm2d(Module):
         self.affine = affine
         self.track_running_stats = track_running_stats
 
-    def __repr__(self):
-        base = 'BatchNorm2d(num_features={:d}'.format(self.num_features)
+    def extra_repr(self):
+        parameters = 'num_features={num_features}'
         if self.eps != 1e-05:
-            base += ', eps={:e}'.format(self.eps)
+            parameters += ', eps={eps}'
         if self.momentum != 0.1:
-            base += ', momentum={:f}'.format(self.momentum)
+            parameters += ', momentum={momentum}'
         if self.affine != True:
-            base += ', affine={:s}'.format(str(self.affine))
+            parameters += ', affine={affine}'
         if self.track_running_stats != True:
-            base += ', track_running_stats={:s}'.format(str(self.track_running_stats))
-        base += ')'
-        if self._flops != 0:
-            base += ', FLOPs = {:,d}'.format(self._flops)
-        return base
+            parameters += ', track_running_stats={track_running_stats}'
+        return parameters.format(**self.__dict__)
 
     def _calc_flops(self, x, y):
         cin, hin, win = x
@@ -59,14 +56,11 @@ class L2Norm2d(Module):
         self.num_features = num_features
         self.gamma_init = gamma_init
 
-    def __repr__(self):
-        base = 'L2Norm2d(num_features={:d}'.format(self.num_features)
+    def extra_repr(self):
+        parameters = 'num_features={num_features}'
         if self.gamma_init != 20:
-            base += ', gamma_init={:d}'.format(self.gamma_init)
-        base += ')'
-        if self._flops != 0:
-            base += ', FLOPs = {:,d}'.format(self._flops)
-        return base
+            parameters += ', gamma_init={gamma_init}'
+        return parameters.format(**self.__dict__)
 
     def _calc_flops(self, x, y):
         cin, hin, win = x

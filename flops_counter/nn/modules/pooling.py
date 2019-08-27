@@ -1,4 +1,4 @@
-from ._utils import _pair
+from .utils import _pair
 
 from .module import Module
 

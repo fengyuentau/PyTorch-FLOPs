@@ -2,7 +2,7 @@ from collections import OrderedDict
 from itertools import islice
 import operator
 
-from ._utils import container_abcs
+from flops_counter._six import container_abcs
 from .module import Module
 
 class Sequential(Module):

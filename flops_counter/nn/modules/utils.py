@@ -1,15 +1,15 @@
-import sys
+# import sys
 
-PY_VER = sys.version_info[0]
-if PY_VER == 2:
-    import collections
-    container_abcs = collections
-elif PY_VER == 3:
-    import collections.abc
-    container_abcs = collections.abc
+# PY_VER = sys.version_info[0]
+# if PY_VER == 2:
+#     import collections
+#     container_abcs = collections
+# elif PY_VER == 3:
+#     import collections.abc
+#     container_abcs = collections.abc
 
+from flops_counter._six import container_abcs
 from itertools import repeat
-
 
 def _ntuple(n):
     def parse(x):

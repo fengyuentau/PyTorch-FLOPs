@@ -6,6 +6,7 @@ from .pooling import MaxPool2d, AdaptiveAvgPool2d
 from .eltops import EltAdd, EltMul
 from .linear import Linear
 from .upsample import Upsample
+from .container import Sequential
 
 
 __all__ = [
@@ -16,5 +17,6 @@ __all__ = [
     'MaxPool2d', 'AdaptiveAvgPool2d',
     'EltAdd', 'EltMul',
     'Linear',
-    'Upsample'
+    'Upsample',
+    'Sequential'
 ]

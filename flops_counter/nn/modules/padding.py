@@ -1,5 +1,6 @@
 from .module import Module
 from .utils import _quadruple
+from .. import functional as F
 
 class _ConstantPadNd(Module):
     __constants__ = ['padding', 'value']
@@ -9,21 +10,7 @@ class _ConstantPadNd(Module):
         self.value = value
 
     def forward(self, input):
-        # return F.pad(input, self.padding, 'constant', self.value)
-        assert len(self.padding) % 2 == 0, 'Padding length must be divisible by 2'
-        assert len(self.padding) // 2 <= len(input), 'Padding length too large'
-
-        if len(self.padding) == 4 and len(input) == 3:
-            cin, hin, win = input
-            pleft, pright, ptop, pbottom = self.padding
-
-            cout = cin
-            hout = hin + ptop + pbottom
-            wout = win + pleft + pright
-            y = [cout, hout, wout]
-            return y
-        else:
-            raise NotImplementedError
+        return F.pad(input, self.padding, 'constant', self.value)
 
     def extra_repr(self):
         return 'padding={}, value={}'.format(self.padding, self.value)

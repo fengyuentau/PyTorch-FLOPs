@@ -7,6 +7,7 @@ from .eltops import EltAdd, EltMul
 from .linear import Linear
 from .upsample import Upsample
 from .container import Sequential
+from .padding import ConstantPad2d, ZeroPad2d
 
 
 __all__ = [
@@ -18,5 +19,6 @@ __all__ = [
     'EltAdd', 'EltMul',
     'Linear',
     'Upsample',
-    'Sequential'
+    'Sequential',
+    'ConstantPad2d', 'ZeroPad2d'
 ]

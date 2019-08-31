@@ -7,7 +7,7 @@ import time
 import cv2
 import numpy as np
 
-import torch
+import flops_counter
 
 def parseargs():
     parser = argparse.ArgumentParser()
@@ -46,7 +46,7 @@ def calc_flops(net, img, scale=1, flip=True, max_downsample=16):
     img_s = cv2.resize(img, None, None, fx=scale_w, fy=scale_h, interpolation=cv2.INTER_LINEAR)
 
     img_s_h, img_s_w, img_s_c = img_s.shape
-    x = [img_s_c, img_s_h, img_s_w]
+    x = flops_counter.TensorSize([1, img_s_c, img_s_h, img_s_w])
     net(x)
 
     flops = net.flops * 2 if flip else net.flops

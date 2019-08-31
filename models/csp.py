@@ -197,7 +197,7 @@ class CSP(nn.Module):
         p5up = self.p5up_l2norm(p5up)
 
         # concat
-        conc = flops_counter.cat((p3up, p4up, p5up), 0)
+        conc = flops_counter.cat((p3up, p4up, p5up), 1)
 
         # detection head - feat
         feat = self.feat_conv(conc)

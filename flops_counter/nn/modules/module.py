@@ -21,6 +21,8 @@ class Module(object):
         # self._forward_pre_hooks = OrderedDict()
         self._modules = OrderedDict()
         self._flops = int(0)
+        self._input = list()
+        self._output = list()
 
     def forward(self, *input):
         raise NotImplementedError
@@ -93,7 +95,7 @@ class Module(object):
         main_str += ')'
 
         if self._flops != 0:
-            main_str += ', FLOPs = {:,d}'.format(self._flops)
+            main_str += ', FLOPs = {:,d}, input = {:s}, output = {:s}'.format(self._flops, str(self._input), str(self._output))
         return main_str
 
     @property

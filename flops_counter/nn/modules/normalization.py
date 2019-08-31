@@ -44,6 +44,9 @@ class BatchNorm2d(Module):
 
         self._calc_flops(x, y)
 
+        self._input = x
+        self._output = y
+
         return y
 
 class L2Norm2d(Module):
@@ -77,5 +80,8 @@ class L2Norm2d(Module):
         y = [i for i in x]
 
         self._calc_flops(x, y)
+
+        self._input = x
+        self._output = y
 
         return y

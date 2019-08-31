@@ -31,6 +31,9 @@ class ReLU(Module):
 
         self._calc_flops(x, y)
 
+        self._input = x
+        self._output = y
+
         return y
 
 class Sigmoid(Module):
@@ -52,6 +55,9 @@ class Sigmoid(Module):
         y = [i for i in x]
 
         self._calc_flops(x, y)
+
+        self._input = x
+        self._output = y
 
         return y
 
@@ -85,5 +91,8 @@ class Softmax(Module):
         y = [i for i in x]
 
         self._calc_flops(x, y)
+
+        self._input = x
+        self._output = y
 
         return y

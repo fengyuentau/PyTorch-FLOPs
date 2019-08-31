@@ -10,7 +10,11 @@ class _ConstantPadNd(Module):
         self.value = value
 
     def forward(self, input):
-        return F.pad(input, self.padding, 'constant', self.value)
+        y = F.pad(input, self.padding, 'constant', self.value)
+
+        self._input = input
+        self._output = y
+        return y
 
     def extra_repr(self):
         return 'padding={}, value={}'.format(self.padding, self.value)

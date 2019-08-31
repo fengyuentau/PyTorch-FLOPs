@@ -58,6 +58,9 @@ class MaxPool2d(Module):
 
         self._calc_flops(x, y)
 
+        self._input = x
+        self._output = y
+
         return y
 
 class AdaptiveAvgPool2d(Module):
@@ -87,5 +90,8 @@ class AdaptiveAvgPool2d(Module):
         y = [cin, hout, wout]
 
         # self._calc_flops(x, y)
+
+        self._input = x
+        self._output = y
 
         return y

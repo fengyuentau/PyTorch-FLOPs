@@ -33,4 +33,7 @@ class Linear(Module):
 
         self._calc_flops(x, y)
 
+        self._input = x
+        self._output = y
+
         return y

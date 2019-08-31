@@ -54,4 +54,7 @@ class Upsample(Module):
         y = _output(x)
         self._calc_flops(x, y)
 
+        self._input = x
+        self._output = y
+
         return y

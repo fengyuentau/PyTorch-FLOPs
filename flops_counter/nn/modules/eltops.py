@@ -21,6 +21,9 @@ class EltAdd(Module):
 
         self._calc_flops(x, y)
 
+        self._input = x
+        self._output = y
+
         return y
 
 class EltMul(Module):
@@ -43,5 +46,8 @@ class EltMul(Module):
         y = [i for i in a]
 
         self._calc_flops(x, y)
+
+        self._input = x
+        self._output = y
 
         return y

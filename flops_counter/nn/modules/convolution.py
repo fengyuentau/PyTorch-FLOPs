@@ -66,6 +66,9 @@ class Conv2d(Module):
 
         self._calc_flops(x, y)
 
+        self._input = x
+        self._output = y
+
         return y
 
 
@@ -134,5 +137,8 @@ class ConvTranspose2d(Module):
         y = [self.out_channels, hout, wout]
 
         self._calc_flops(x, y)
+
+        self._input = x
+        self._output = y
 
         return y

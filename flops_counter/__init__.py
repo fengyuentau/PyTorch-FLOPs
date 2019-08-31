@@ -1,5 +1,5 @@
 from .nn import *
-from .utils import cat
+from .utils import cat, permute, view
 
 import sys
 

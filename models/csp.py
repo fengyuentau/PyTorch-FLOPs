@@ -1,6 +1,3 @@
-import sys
-sys.path.append('..')
-
 import flops_counter
 import flops_counter.nn as nn
 

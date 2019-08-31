@@ -20,10 +20,11 @@ class Upsample(Module):
         super(Upsample, self).__init__()
 
         self.size = size
-        if isinstance(scale_factor, tuple):
-            self.scale_factor = tuple(float(factor) for factor in scale_factor)
-        else:
-            self.scale_factor = float(scale_factor) if scale_factor else None
+        # if isinstance(scale_factor, tuple):
+        #     self.scale_factor = tuple(float(factor) for factor in scale_factor)
+        # else:
+        #     self.scale_factor = float(scale_factor) if scale_factor else None
+        self.scale_factor = _pair(scale_factor)
         self.mode = mode
         self.align_corners = align_corners
 
@@ -48,11 +49,9 @@ class Upsample(Module):
         def _output(x):
             if self.size is not None:
                 return [x[0], self.size[0], self.size[1]]
-            self.scale_factor = _pair(self.scale_factor)
-            return [x[0], int(math.floor(float(x[0])) * self.scale_factor[0]), int(math.floor(float(x[1])) * self.scale_factor[1])]
+            return [x[0], int(math.floor(float(x[1])) * self.scale_factor[0]), int(math.floor(float(x[2])) * self.scale_factor[1])]
 
         y = _output(x)
-
         self._calc_flops(x, y)
 
-        return y, flops
+        return y

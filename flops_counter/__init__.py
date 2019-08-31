@@ -1,7 +1,11 @@
 from .nn import *
-from .utils import cat, permute, view
+from .utils import cat
+from .tensorsize import TensorSize
 
 import sys
+
+__all__ = ['TensorSize']
+
 
 PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3

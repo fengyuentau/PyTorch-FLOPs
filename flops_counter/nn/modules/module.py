@@ -98,6 +98,12 @@ class Module(object):
             main_str += ', FLOPs = {:,d}, input = {:s}, output = {:s}'.format(self._flops, str(self._input), str(self._output))
         return main_str
 
+    def _calc_flops_Nd(self, x, y):
+        raise NotImplementedError
+
+    def _calc_flops_2d(self, x, y):
+        raise NotImplementedError
+
     @property
     def flops(self):
         # print(bool(self._modules))

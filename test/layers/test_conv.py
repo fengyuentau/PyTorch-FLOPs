@@ -3,6 +3,7 @@ from _utils import test_on
 import sys
 sys.path.append('.')
 from flops_counter import nn
+from flops_counter.tensorsize import TensorSize
 
 
 ######
@@ -15,14 +16,14 @@ conv = {
         nn.Conv2d(64, 64, 3, 1, 1, bias=False) # same shape
     ],
     'ins': [
-        [3, 224, 224],
-        [64, 56, 56],
-        [64, 56, 56]
+        TensorSize([1, 3, 224, 224]),
+        TensorSize([1, 64, 56, 56]),
+        TensorSize([1, 64, 56, 56])
     ],
     'out_shape': [
-        [64, 112, 112],
-        [64, 56, 56],
-        [64, 56, 56]
+        TensorSize([1, 64, 112, 112]),
+        TensorSize([1, 64, 56, 56]),
+        TensorSize([1, 64, 56, 56])
     ],
     'out_flops': [
         235225088,
@@ -43,12 +44,12 @@ convtran = {
         nn.ConvTranspose2d(1024, 256, 4, 4, 0) # quadro the shape, except channels
     ],
     'ins': [
-        [512, 28, 28],
-        [1024, 14, 14]
+        TensorSize([1, 512, 28, 28]),
+        TensorSize([1, 1024, 14, 14])
     ],
     'out_shape': [
-        [256, 56, 56],
-        [256, 56, 56]
+        TensorSize([1, 256, 56, 56]),
+        TensorSize([1, 256, 56, 56])
     ],
     'out_flops': [
         13153337344,

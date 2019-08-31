@@ -3,6 +3,7 @@ import math
 from .utils import _pair
 
 from .module import Module
+from flops_counter.tensorsize import TensorSize
 
 class Upsample(Module):
     def __init__(self,
@@ -40,21 +41,30 @@ class Upsample(Module):
             parameters += ', align_corners={align_corners}'
         return parameters.format(**self.__dict__)
 
-    def _calc_flops(self, x, y):
-        cin, hin, win = x
-        cout, hout, wout = y
-        self._flops = 13 * abs(cout * hout * wout - cin * hin * win)
+    def _calc_flops_2d(self, x: TensorSize, y: TensorSize):
+        bsin, cin, hin, win = x.value
+        bsout, cout, hout, wout = y.value
+        assert bsin == bsout, 'Batch size of input and output must be equal'
+        self._flops = 13 * abs(y.nelement - x.nelement)
 
-    def forward(self, x):
-        def _output(x):
+    def forward(self, x: TensorSize):
+        assert isinstance(x, TensorSize), \
+            'Type of input must be \'{}\'.'.format(TensorSize.__name__)
+
+        if x.dim == 4:
+            bsin, cin, hin, win = x.value
+            _out = [bsin, cin, hin, win]
             if self.size is not None:
-                return [x[0], self.size[0], self.size[1]]
-            return [x[0], int(math.floor(float(x[1])) * self.scale_factor[0]), int(math.floor(float(x[2])) * self.scale_factor[1])]
+                _out = [bsin, cin, self.size[0], self.size[1]]
+            else:
+                _out = [bsin, cin, hin * self.scale_factor[0], win * self.scale_factor[1]]
+            y = TensorSize(_out)
 
-        y = _output(x)
-        self._calc_flops(x, y)
+            self._calc_flops_2d(x, y)
 
-        self._input = x
-        self._output = y
+            self._input = x
+            self._output = y
 
-        return y
+            return y
+        else:
+            raise NotImplementedError('Not implemented yet for \'{:s}\' with dimension {:d} != 4.'.format(TensorSize.__name__, x.dim))

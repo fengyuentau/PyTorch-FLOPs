@@ -1,4 +1,5 @@
 from .module import Module
+from flops_counter.tensorsize import TensorSize
 
 # https://pytorch.org/docs/stable/nn.html#linear
 class Linear(Module):
@@ -17,21 +18,22 @@ class Linear(Module):
             parameters += ', bias={bias}'
         return parameters.format(**self.__dict__)
 
-    def _calc_flops(self, x, y):
-        cin, hin, win = x
-        cout, hout, wout = y
-        self._flops = (2 * self.in_features - (0 if self.bias else 1)) * self.out_features
+    def _calc_flops_Nd(self, x, y):
+        bsin = x.value[0]
+        bsout = y.value[0]
+        assert bsin == bsout, 'Batch size of input and output must be equal'
+        self._flops = (2 * self.in_features - (0 if self.bias else 1)) * self.out_features * bsout
 
-    def forward(self, x):
-        '''
-        x should be of shape [channels, height, width]
-        '''
-        assert x[-1] == self.in_features, 'last dimension {:d} does not match with in_features {:d}.'.format(x[-1], self.in_features)
+    def forward(self, x: TensorSize):
+        assert isinstance(x, TensorSize), \
+            'Type of input must be \'{}\'.'.format(TensorSize.__name__)
+        assert x.value[-1] == self.in_features, 'last dimension {:d} does not match with in_features {:d}.'.format(x.value[-1], self.in_features)
 
-        y = [_x for _x in x]
+        y = [i for i in x.value]
         y[-1] = self.out_features
+        y = TensorSize(y)
 
-        self._calc_flops(x, y)
+        self._calc_flops_Nd(x, y)
 
         self._input = x
         self._output = y

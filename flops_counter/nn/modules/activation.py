@@ -2,7 +2,11 @@ from functools import reduce
 
 from .module import Module
 
+from flops_counter.tensorsize import TensorSize
+
 class ReLU(Module):
+    __constants__ = ['inplace']
+
     def __init__(self,
         inplace=False):
 
@@ -12,24 +16,22 @@ class ReLU(Module):
 
     def extra_repr(self):
         parameters = ''
-        if self.inplace != False:
-            parameters += 'inplace={inplace}'
+        parameters += 'inplace={inplace}'
         return parameters.format(**self.__dict__)
 
-    def _calc_flops(self, x, y):
-        cin, hin, win = x
-        cout, hout, wout = y
-        self._flops = 2 * (cout * hout * wout)
+    def _calc_flops_Nd(self, x: TensorSize, y: TensorSize):
+        bsin = x.value[0]
+        bsout = y.value[0]
+        assert bsin == bsout, 'Batch size of input and output must be equal'
+        self._flops = 2 * y.nelement
 
-    def forward(self, x):
-        '''
-        x should be of shape [channels, height, width]
-        '''
-        assert len(x) == 3, 'input size should be 3, which is [channels, height, width].'
+    def forward(self, x: TensorSize):
+        assert isinstance(x, TensorSize), \
+            'Type of input must be \'{}\'.'.format(TensorSize.__name__)
 
-        y = [i for i in x]
+        y = TensorSize(x._tensor_size)
 
-        self._calc_flops(x, y)
+        self._calc_flops_Nd(x, y)
 
         self._input = x
         self._output = y
@@ -40,26 +42,25 @@ class Sigmoid(Module):
     def __init__(self):
         super(Sigmoid, self).__init__()
 
+    def _calc_flops_Nd(self, x: TensorSize, y: TensorSize):
+        bsin = x.value[0]
+        bsout = y.value[0]
+        assert bsin == bsout, 'Batch size of input and output must be equal'
+        self._flops = 3 * y.nelement
 
-    def _calc_flops(self, x, y):
-        cin, hin, win = x
-        cout, hout, wout = y
-        self._flops = 3 * (cout * hout * wout)
+    def forward(self, x: TensorSize):
+        assert isinstance(x, TensorSize), \
+            'Type of input must be \'{}\'.'.format(TensorSize.__name__)
 
-    def forward(self, x):
-        '''
-        x should be of shape [channels, height, width]
-        '''
-        assert len(x) == 3, 'input size should be 3, which is [channels, height, width].'
+        y = TensorSize(x._tensor_size)
 
-        y = [i for i in x]
-
-        self._calc_flops(x, y)
+        self._calc_flops_Nd(x, y)
 
         self._input = x
         self._output = y
 
         return y
+
 
 class Softmax(Module):
     __constants__ = ['dim']
@@ -76,21 +77,22 @@ class Softmax(Module):
     def extra_repr(self):
         return 'dim={dim}'.format(dim=self.dim)
 
-    def _calc_flops(self, x, y):
-        ondim = y[self.dim]
-        y_nelements = reduce((lambda a, b: a * b), y)
-        # flops_softmax = ((2 * h * w - 1) + h * w) * c = 3hwc - c
-        self._flops = 3 * y_nelements - ondim
+    def _calc_flops_Nd(self, x: TensorSize, y: TensorSize):
+        bsin = x.value[0]
+        bsout = y.value[0]
+        assert bsin == bsout, 'Batch size of input and output must be equal'
 
-    def forward(self, x):
-        '''
-        x should be of shape [channels, height, width]
-        '''
-        assert len(x) == 3, 'input size should be 3, which is [channels, height, width].'
+        ondim = y.value[self.dim]
+        # flops_softmax = bsout * ((2 * h * w - 1) + h * w) * c = bsout * (3hwc - c)
+        self._flops = 3 * y.nelement - ondim * bsout
 
-        y = [i for i in x]
+    def forward(self, x: TensorSize):
+        assert isinstance(x, TensorSize), \
+            'Type of input must be \'{}\'.'.format(TensorSize.__name__)
 
-        self._calc_flops(x, y)
+        y = TensorSize(x._tensor_size)
+
+        self._calc_flops_Nd(x, y)
 
         self._input = x
         self._output = y

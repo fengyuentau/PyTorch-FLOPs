@@ -1,6 +1,7 @@
 from .module import Module
 from .utils import _quadruple
 from .. import functional as F
+from flops_counter.tensorsize import TensorSize
 
 class _ConstantPadNd(Module):
     __constants__ = ['padding', 'value']
@@ -9,7 +10,7 @@ class _ConstantPadNd(Module):
         super(_ConstantPadNd, self).__init__()
         self.value = value
 
-    def forward(self, input):
+    def forward(self, input: TensorSize):
         y = F.pad(input, self.padding, 'constant', self.value)
 
         self._input = input

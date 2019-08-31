@@ -3,6 +3,7 @@ from _utils import test_on
 import sys
 sys.path.append('.')
 from flops_counter import nn
+from flops_counter.tensorsize import TensorSize
 
 ######
 # test on BatchNorm2d
@@ -12,10 +13,10 @@ bn2d = {
         nn.BatchNorm2d(64) # same shape
     ],
     'ins': [
-        [64, 112, 112]
+        TensorSize([1, 64, 112, 112])
     ],
     'out_shape': [
-        [64, 112, 112]
+        TensorSize([1, 64, 112, 112])
     ],
     'out_flops': [
         4816896
@@ -32,10 +33,10 @@ l2norm2d = {
         nn.L2Norm2d(256) # same shape
     ],
     'ins': [
-        [256, 56, 56]
+        TensorSize([1, 256, 56, 56])
     ],
     'out_shape': [
-        [256, 56, 56]
+        TensorSize([1, 256, 56, 56])
     ],
     'out_flops': [
         2408448

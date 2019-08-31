@@ -1,8 +1,13 @@
 from .utils import _pair
 
 from .module import Module
+from flops_counter.tensorsize import TensorSize
 
 class Conv2d(Module):
+    __constants__ = ['stride', 'padding', 'dilation', 'groups', 'bias',
+                     'padding_mode', 'output_padding', 'in_channels',
+                     'out_channels', 'kernel_size']
+
     def __init__(self,
         in_channels: int,
         out_channels: int,
@@ -47,32 +52,38 @@ class Conv2d(Module):
     def _calc_out(self, i, idx):
         return (i + 2 * self.padding[idx] - self.dilation[idx] * (self.kernel_size[idx] - 1) - 1) // self.stride[idx] + 1
 
-    def _calc_flops(self, x, y):
-        cin, hin, win = x
-        cout, hout, wout = y
-        self._flops = (2 * cin * self.kernel_size[0] * self.kernel_size[1] - (0 if self.bias else 1)) * (cout // self.groups) * hout * wout
+    def _calc_flops_2d(self, x: TensorSize, y: TensorSize):
+        bsin, cin, hin, win = x.value
+        bsout, cout, hout, wout = y.value
+        assert bsin == bsout, 'Batch size of input and output must be equal'
+        self._flops = (2 * cin * self.kernel_size[0] * self.kernel_size[1] - (0 if self.bias else 1)) * (cout // self.groups) * hout * wout * bsout
 
-    def forward(self, x):
-        '''
-        x should be of shape [channels, height, width]
-        '''
-        assert len(x) == 3, 'input size should be 3, which is [channels, height, width].'
-        assert x[0] == self.in_channels, 'The channel of input {:d} does not match with the definition {:d}'.format(x[0], self.in_channels)
+    def forward(self, x: TensorSize):
+        assert isinstance(x, TensorSize), \
+            'Type of input must be \'{}\'.'.format(TensorSize.__name__)
+        assert x.value[1] == self.in_channels, 'The channel of input {:d} does not match with the definition {:d}'.format(x.value[1], self.in_channels)
 
-        cin, hin, win = x
-        hout = self._calc_out(hin, 0)
-        wout = self._calc_out(win, 1)
-        y = [self.out_channels, hout, wout]
+        if x.dim == 4:
+            bsin, cin, hin, win = x.value
+            hout = self._calc_out(hin, 0)
+            wout = self._calc_out(win, 1)
+            y = TensorSize([bsin, self.out_channels, hout, wout])
 
-        self._calc_flops(x, y)
+            self._calc_flops_2d(x, y)
 
-        self._input = x
-        self._output = y
+            self._input = x
+            self._output = y
 
-        return y
+            return y
+        else:
+            raise NotImplementedError('Not implemented yet for \'{:s}\' with dimension {:d} != 4.'.format(TensorSize.__name__, x.dim))
 
 
 class ConvTranspose2d(Module):
+    __constants__ = ['stride', 'padding', 'dilation', 'groups', 'bias',
+                     'padding_mode', 'output_padding', 'in_channels',
+                     'out_channels', 'kernel_size']
+
     def __init__(self,
         in_channels: int,
         out_channels: int,
@@ -119,26 +130,28 @@ class ConvTranspose2d(Module):
     def _calc_out(self, i, idx):
         return (i - 1) * self.stride[idx] - 2 * self.padding[idx] + self.dilation[idx] * (self.kernel_size[idx] - 1) + self.output_padding[idx] + 1
 
-    def _calc_flops(self, x, y):
-        cin, hin, win = x
-        cout, hout, wout = y
-        self._flops = (2 * cin * self.kernel_size[0] * self.kernel_size[1] - (0 if self.bias else 1)) * (cout // self.groups) * (hout * wout - self.output_padding[0] * self.output_padding[1])
+    def _calc_flops_2d(self, x: TensorSize, y: TensorSize):
+        bsin, cin, hin, win = x.value
+        bsout, cout, hout, wout = y.value
+        assert bsin == bsout, 'Batch size of input and output must be equal'
+        self._flops = (2 * cin * self.kernel_size[0] * self.kernel_size[1] - (0 if self.bias else 1)) * (cout // self.groups) * (hout * wout - self.output_padding[0] * self.output_padding[1]) * bsout
 
-    def forward(self, x):
-        '''
-        x should be of shape [channels, height, width]
-        '''
-        assert len(x) == 3, 'input size should be 3, which is [channels, height, width].'
-        assert x[0] == self.in_channels, 'The channel of input {:d} does not match with the definition {:d}'.format(x[0], self.in_channels)
+    def forward(self, x: TensorSize):
+        assert isinstance(x, TensorSize), \
+            'Type of input must be \'{}\'.'.format(TensorSize.__name__)
+        assert x.value[1] == self.in_channels, 'The channel of input {:d} does not match with the definition {:d}'.format(x.value[1], self.in_channels)
 
-        cin, hin, win = x
-        hout = self._calc_out(hin, 0)
-        wout = self._calc_out(win, 1)
-        y = [self.out_channels, hout, wout]
+        if x.dim == 4:
+            bsin, cin, hin, win = x.value
+            hout = self._calc_out(hin, 0)
+            wout = self._calc_out(win, 1)
+            y = TensorSize([bsin, self.out_channels, hout, wout])
 
-        self._calc_flops(x, y)
+            self._calc_flops_2d(x, y)
 
-        self._input = x
-        self._output = y
+            self._input = x
+            self._output = y
 
-        return y
+            return y
+        else:
+            raise NotImplementedError('Not implemented yet for \'{:s}\' with dimension {:d} != 4.'.format(TensorSize.__name__, x.dim))

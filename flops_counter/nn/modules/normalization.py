@@ -1,6 +1,10 @@
 from .module import Module
+from flops_counter.tensorsize import TensorSize
 
 class BatchNorm2d(Module):
+    __constants__ = ['track_running_stats', 'momentum', 'eps',
+                     'num_features', 'affine']
+
     def __init__(self,
         num_features: int,
         eps: float=1e-05,
@@ -28,28 +32,32 @@ class BatchNorm2d(Module):
             parameters += ', track_running_stats={track_running_stats}'
         return parameters.format(**self.__dict__)
 
-    def _calc_flops(self, x, y):
-        cin, hin, win = x
-        cout, hout, wout = y
-        self._flops = 6 * (cout * hout * wout)
+    def _calc_flops_2d(self, x: TensorSize, y: TensorSize):
+        bsin, cin, hin, win = x.value
+        bsout, cout, hout, wout = y.value
+        assert bsin == bsout, 'Batch size of input and output must be equal'
+        self._flops = 6 * y.nelement
 
-    def forward(self, x):
-        '''
-        x should be of shape [channels, height, width]
-        '''
-        assert len(x) == 3, 'input size should be 3, which is [channels, height, width].'
-        assert x[0] == self.num_features, 'The channel of input {:d} does not match with the definition {:d}'.format(x[0], self.in_channels)
+    def forward(self, x: TensorSize):
+        assert isinstance(x, TensorSize), \
+            'Type of input must be \'{}\'.'.format(TensorSize.__name__)
+        assert x.value[1] == self.num_features, 'The channel of input {:d} does not match with the definition {:d}'.format(x.value[0], self.num_features)
 
-        y = [i for i in x]
+        if x.dim == 4:
+            y = TensorSize(x.value)
 
-        self._calc_flops(x, y)
+            self._calc_flops_2d(x, y)
 
-        self._input = x
-        self._output = y
+            self._input = x
+            self._output = y
 
-        return y
+            return y
+        else:
+            raise NotImplementedError('Not implemented yet for \'{:s}\' with dimension {:d} != 4.'.format(TensorSize.__name__, x.dim))
 
 class L2Norm2d(Module):
+    __constants__ = ['num_features', 'gamma_init']
+
     def __init__(self,
         num_features: int,
         gamma_init: int=20):
@@ -65,23 +73,25 @@ class L2Norm2d(Module):
             parameters += ', gamma_init={gamma_init}'
         return parameters.format(**self.__dict__)
 
-    def _calc_flops(self, x, y):
-        cin, hin, win = x
-        cout, hout, wout = y
-        self._flops = 3 * (cout * hout * wout)
+    def _calc_flops_2d(self, x: TensorSize, y: TensorSize):
+        bsin, cin, hin, win = x.value
+        bsout, cout, hout, wout = y.value
+        assert bsin == bsout, 'Batch size of input and output must be equal'
+        self._flops = 3 * y.nelement
 
-    def forward(self, x):
-        '''
-        x should be of shape [channels, height, width]
-        '''
-        assert len(x) == 3, 'input size should be 3, which is [channels, height, width].'
-        assert x[0] == self.num_features, 'The channel of input {:d} does not match with the definition {:d}'.format(x[0], self.in_channels)
+    def forward(self, x: TensorSize):
+        assert isinstance(x, TensorSize), \
+            'Type of input must be \'{}\'.'.format(TensorSize.__name__)
+        assert x.value[1] == self.num_features, 'The channel of input {:d} does not match with the definition {:d}'.format(x.value[0], self.num_features)
 
-        y = [i for i in x]
+        if x.dim == 4:
+            y = TensorSize(x.value)
 
-        self._calc_flops(x, y)
+            self._calc_flops_2d(x, y)
 
-        self._input = x
-        self._output = y
+            self._input = x
+            self._output = y
 
-        return y
+            return y
+        else:
+            raise NotImplementedError('Not implemented yet for \'{:s}\' with dimension {:d} != 4.'.format(TensorSize.__name__, x.dim))

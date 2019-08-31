@@ -1,6 +1,7 @@
 from .utils import _pair
 
 from .module import Module
+from flops_counter.tensorsize import TensorSize
 
 class MaxPool2d(Module):
     __constants__ = ['kernel_size', 'stride', 'padding', 'dilation',
@@ -40,58 +41,60 @@ class MaxPool2d(Module):
     def _calc_out(self, i, idx):
         return (i + 2 * self.padding[idx] - self.dilation[idx] * (self.kernel_size[idx] - 1) - 1) // self.stride[idx] + 1
 
-    def _calc_flops(self, x, y):
-        cin, hin, win = x
-        cout, hout, wout = y
-        self._flops = self.kernel_size[0] * self.kernel_size[1] * cout * hout * wout
+    def _calc_flops_2d(self, x, y):
+        bsin, cin, hin, win = x.value
+        bsout, cout, hout, wout = y.value
+        assert bsin == bsout, 'Batch size of input and output must be equal'
+        self._flops = self.kernel_size[0] * self.kernel_size[1] * y.nelement
 
-    def forward(self, x):
-        '''
-        x should be of shape [channels, height, width]
-        '''
-        assert len(x) == 3, 'input size should be 3, which is [channels, height, width].'
+    def forward(self, x: TensorSize):
+        assert isinstance(x, TensorSize), \
+            'Type of input must be \'{}\'.'.format(TensorSize.__name__)
 
-        cin, hin, win = x
-        hout = self._calc_out(hin, 0)
-        wout = self._calc_out(win, 1)
-        y = [cin, hout, wout]
+        if x.dim == 4:
+            bsin, cin, hin, win = x.value
+            hout = self._calc_out(hin, 0)
+            wout = self._calc_out(win, 1)
+            y = TensorSize([bsin, cin, hout, wout])
 
-        self._calc_flops(x, y)
+            self._calc_flops_2d(x, y)
 
-        self._input = x
-        self._output = y
+            self._input = x
+            self._output = y
 
-        return y
+            return y
+        else:
+            raise NotImplementedError('Not implemented yet for \'{:s}\' with dimension {:d} != 4.'.format(TensorSize.__name__, x.dim))
 
-class AdaptiveAvgPool2d(Module):
-    __constants__ = ['output_size']
-    def __init__(self, output_size):
-        super(AdaptiveAvgPool2d, self).__init__()
-        self.output_size = _pair(output_size)
+# class AdaptiveAvgPool2d(Module):
+#     __constants__ = ['output_size']
+#     def __init__(self, output_size):
+#         super(AdaptiveAvgPool2d, self).__init__()
+#         self.output_size = _pair(output_size)
 
-    def extra_repr(self):
-        return 'output_size={output_size}'.format(**self.__dict__)
+#     def extra_repr(self):
+#         return 'output_size={output_size}'.format(**self.__dict__)
 
-    def _calc_out(self, i, idx):
-        return self.output_size[idx]
+#     def _calc_out(self, i, idx):
+#         return self.output_size[idx]
 
-    def _calc_flops(self, x, y):
-        raise NotImplementedError
+#     def _calc_flops(self, x, y):
+#         raise NotImplementedError
 
-    def forward(self, x):
-        '''
-        x should be of shape [channels, height, width]
-        '''
-        assert len(x) == 3, 'input size should be 3, which is [channels, height, width].'
+#     def forward(self, x):
+#         '''
+#         x should be of shape [channels, height, width]
+#         '''
+#         assert len(x) == 3, 'input size should be 3, which is [channels, height, width].'
 
-        cin, hin, win = x
-        hout = self._calc_out(hin, 0)
-        wout = self._calc_out(win, 1)
-        y = [cin, hout, wout]
+#         cin, hin, win = x
+#         hout = self._calc_out(hin, 0)
+#         wout = self._calc_out(win, 1)
+#         y = [cin, hout, wout]
 
-        # self._calc_flops(x, y)
+#         # self._calc_flops(x, y)
 
-        self._input = x
-        self._output = y
+#         self._input = x
+#         self._output = y
 
-        return y
+#         return y

@@ -6,21 +6,21 @@ from flops_counter import nn
 from flops_counter.tensorsize import TensorSize
 
 ######
-# test on MaxPool2d
+# test on Linear
 ######
-mxpool2d = {
+linear = {
     'layers': [
-        nn.MaxPool2d(3, 2, 1) # same shape
+        nn.Linear(4096, 8192) # same shape
     ],
     'ins': [
-        TensorSize([1, 64, 112, 112])
+        TensorSize([1, 4096])
     ],
     'out_shape': [
-        TensorSize([1, 64, 56, 56])
+        TensorSize([1, 8192])
     ],
     'out_flops': [
-        602112
+        67108864
     ]
 }
 
-test_on(mxpool2d)
+test_on(linear)

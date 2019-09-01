@@ -95,6 +95,10 @@ class DSFD(nn.Module):
         self.conf = nn.ModuleList(head[1])
         self.softmax = nn.Softmax(dim=-1)
 
+    @property
+    def name(self):
+        return self._get_name() + '_ResNet152'
+
     def forward(self, x):
         loc = list()
         conf = list()
@@ -116,21 +120,21 @@ class DSFD(nn.Module):
         lfpn3_fc7_x_up = self.upsample(self.latlayer3(fc7_x))
         lfpn3_conv5_3_x = self.smooth3(conv5_3_x)
         if lfpn3_fc7_x_up.value[2] != lfpn3_conv5_3_x.value[2] or lfpn3_fc7_x_up.value[3] != lfpn3_conv5_3_x.value[3]:
-            pad = (0, abs(lfpn3_conv5_3_x.value[3] - lfpn3_fc7_x_up.value[3]), 0, abs(lfpn3_conv5_3_x.value[2] - lfpn3_fc7_x_up.value[2]))
+            pad = (0, lfpn3_conv5_3_x.value[3] - lfpn3_fc7_x_up.value[3], 0, lfpn3_conv5_3_x.value[2] - lfpn3_fc7_x_up.value[2])
             lfpn3_fc7_x_up = F.pad(lfpn3_fc7_x_up, pad)
         lfpn3 = self.eltmul(lfpn3_fc7_x_up, lfpn3_conv5_3_x)
 
         lfpn2_lfpn3_up = self.upsample(self.latlayer2(lfpn3))
         lfpn2_conv4_3_x = self.smooth2(conv4_3_x)
         if lfpn2_lfpn3_up.value[2] != lfpn2_conv4_3_x.value[2] or lfpn2_lfpn3_up.value[3] != lfpn2_conv4_3_x.value[3]:
-            pad = (0, abs(lfpn2_conv4_3_x.value[3] - lfpn2_lfpn3_up.value[3]), 0, abs(lfpn2_conv4_3_x.value[2] - lfpn2_lfpn3_up.value[2]))
+            pad = (0, lfpn2_conv4_3_x.value[3] - lfpn2_lfpn3_up.value[3], 0, lfpn2_conv4_3_x.value[2] - lfpn2_lfpn3_up.value[2])
             lfpn2_lfpn3_up = F.pad(lfpn2_lfpn3_up, pad)
         lfpn2 = self.eltmul(lfpn2_lfpn3_up, lfpn2_conv4_3_x)
 
         lfpn1_lfpn2_up = self.upsample(self.latlayer1(lfpn2))
         lfpn1_conv3_3_x = self.smooth1(conv3_3_x)
         if lfpn1_lfpn2_up.value[2] != lfpn1_conv3_3_x.value[2] or lfpn1_lfpn2_up.value[3] != lfpn1_conv3_3_x.value[3]:
-            pad = (0, abs(lfpn1_conv3_3_x.value[3] - lfpn1_lfpn2_up.value[3]), 0, abs(lfpn1_conv3_3_x.value[2] - lfpn1_lfpn2_up.value[2]))
+            pad = (0, lfpn1_conv3_3_x.value[3] - lfpn1_lfpn2_up.value[3], 0, lfpn1_conv3_3_x.value[2] - lfpn1_lfpn2_up.value[2])
             lfpn1_lfpn2_up = F.pad(lfpn1_lfpn2_up, pad)
         lfpn1 = self.eltmul(lfpn1_lfpn2_up, lfpn1_conv3_3_x)
 

@@ -4,6 +4,8 @@ from functools import reduce
 from flops_counter._six import container_abcs
 
 # refer to torch/tensor.py in pytorch@3ed720079
+# see also here: https://github.com/pytorch/pytorch/issues/2013
+#  and https://stackoverflow.com/questions/49724954/how-are-pytorchs-tensors-implemented
 
 def _infer_sizes(sizes, total):
     to_infer = -1

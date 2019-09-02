@@ -67,6 +67,21 @@ class TensorSize(object):
 
         return TensorSize(_output)
 
+    def max(self, dim=None, keepdim=False):
+        if dim is None:
+            return TensorSize(1)
+
+        assert dim in [i for i in range(self.dim)], \
+            'Given dim {:d} is out of dimension {}.'.format(dim, self.dim)
+
+        dst = copy.deepcopy(self._tensor_size)
+        if keepdim:
+            dst[dim] = 1
+        else:
+            del dst[dim]
+        return TensorSize(dst)
+
+
     @property
     def nelement(self):
         return reduce((lambda a, b: a * b), self._tensor_size)

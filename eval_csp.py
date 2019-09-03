@@ -9,12 +9,25 @@ import numpy as np
 
 import flops_counter
 
+import platform
+ossystem = platform.system()
+osrelease = platform.release()
+DEFAULT_WIDERFACE_ROOT = '/Users/fengyuantao/playground/dataset/WIDER_FACE'
+if ossystem == 'Darwin':
+    DEFAULT_WIDERFACE_ROOT = '/Users/fengyuantao/playground/dataset/WIDER_FACE'
+elif ossystem == 'Linux':
+    if osrelease == '4.15.0-54-generic':
+        DEFAULT_WIDERFACE_ROOT = '/home/tau/Documents/dataset/WiderFace'
+    elif osrelease == '4.4.0-87-generic':
+        DEFAULT_WIDERFACE_ROOT = '/home1/tau/datasets/wider_face'
+elif ossystem == 'Windows':
+    DEFAULT_WIDERFACE_ROOT = 'D:\dataset\widerface'
+
 def parseargs():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--widerface_root', default='D:\dataset\widerface')
-    parser.add_argument('--set', default='val', help='Run in mode test or val.', required=True)
-    # parser.add_argument('--max_downsample', default=32, type=int)
+    parser.add_argument('--widerface_root', default=DEFAULT_WIDERFACE_ROOT)
+    parser.add_argument('--set', default='val', help='Run in mode test or val.')
 
     args = parser.parse_args()
     return args
@@ -47,9 +60,11 @@ def calc_flops(net, img, scale=1, flip=True, max_downsample=16):
 
     img_s_h, img_s_w, img_s_c = img_s.shape
     x = flops_counter.TensorSize([1, img_s_c, img_s_h, img_s_w])
-    net(x)
 
+    net(x)
     flops = net.flops * 2 if flip else net.flops
+
+    net.set_flops_zero()
     return flops
 
 if __name__ == '__main__':

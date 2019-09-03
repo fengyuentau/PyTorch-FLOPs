@@ -42,7 +42,7 @@ def get_set_size(annotation_filepath):
 
 def build_net():
     from models import PyramidBox
-    net = PyramidBox([)
+    net = PyramidBox()
     return net
 
 def calc_shrink(height, width):

@@ -58,7 +58,7 @@ class Module(object):
             type(self).__name__, name))
 
     def __setattr__(self, name, value):
-        def remove_from(dicts):
+        def remove_from(*dicts):
             for d in dicts:
                 if name in d:
                     del d[name]

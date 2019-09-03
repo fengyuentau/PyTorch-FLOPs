@@ -131,10 +131,10 @@ class CPM(nn.Module):
         return ssh_concat
 
 class PyramidBox(nn.Module):
-    def __init__(self, img_shape):
+    def __init__(self):
         super(PyramidBox, self).__init__()
 
-        self.img_shape = img_shape
+        self.img_shape = [3, 1024, 1024]
 
         self._vgg()
         self._low_level_fpn()

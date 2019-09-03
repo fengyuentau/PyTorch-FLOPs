@@ -41,7 +41,7 @@ class Upsample(Module):
             parameters += ', align_corners={align_corners}'
         return parameters.format(**self.__dict__)
 
-    def _calc_flops_2d(self, x: TensorSize, y: TensorSize):
+    def _calc_flops(self, x: TensorSize, y: TensorSize):
         bsin, cin, hin, win = x.value
         bsout, cout, hout, wout = y.value
         assert bsin == bsout, 'Batch size of input and output must be equal'
@@ -59,8 +59,6 @@ class Upsample(Module):
             else:
                 _out = [bsin, cin, hin * self.scale_factor[0], win * self.scale_factor[1]]
             y = TensorSize(_out)
-
-            self._calc_flops_2d(x, y)
 
             self._input = x
             self._output = y

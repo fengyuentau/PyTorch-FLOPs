@@ -29,6 +29,7 @@ class Module(object):
 
     def __call__(self, *input, **kwargs):
         result = self.forward(*input, **kwargs)
+        self._calc_flops(input[0], result)
         return result
 
     def add_module(self, name, module):
@@ -50,7 +51,6 @@ class Module(object):
         def remove_from(dicts):
             for d in dicts:
                 if name in d:
-                    print('remove {:s}.'.format(name))
                     del d[name]
 
         modules = self.__dict__.get('_modules')
@@ -58,7 +58,7 @@ class Module(object):
             if modules is None:
                 raise AttributeError(
                     'cannot assign module before Module.__init__() call')
-            remove_from(self.__dict__)
+            # remove_from(self.__dict__)
             modules[name] = value
         object.__setattr__(self, name, value)
 
@@ -98,15 +98,7 @@ class Module(object):
             main_str += ', FLOPs = {:,d}, input = {:s}, output = {:s}'.format(self._flops, str(self._input), str(self._output))
         return main_str
 
-    def _calc_flops_Nd(self, x, y):
-        raise NotImplementedError
-
-    def _calc_flops_2d(self, x, y):
-        raise NotImplementedError
-
-    @property
-    def flops(self):
-        # print(bool(self._modules))
+    def _calc_flops(self, x, y):
         if not bool(self._modules):
             return self._flops
 
@@ -115,4 +107,8 @@ class Module(object):
         for name, module in self._modules.items():
             if module is not None and isinstance(module, Module):
                 self._flops += module._flops
+        # return self._flops
+
+    @property
+    def flops(self):
         return self._flops

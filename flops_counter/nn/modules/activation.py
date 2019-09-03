@@ -19,7 +19,7 @@ class ReLU(Module):
         parameters += 'inplace={inplace}'
         return parameters.format(**self.__dict__)
 
-    def _calc_flops_Nd(self, x: TensorSize, y: TensorSize):
+    def _calc_flops(self, x: TensorSize, y: TensorSize):
         bsin = x.value[0]
         bsout = y.value[0]
         assert bsin == bsout, 'Batch size of input and output must be equal'
@@ -31,8 +31,6 @@ class ReLU(Module):
 
         y = TensorSize(x._tensor_size)
 
-        self._calc_flops_Nd(x, y)
-
         self._input = x
         self._output = y
 
@@ -42,7 +40,7 @@ class Sigmoid(Module):
     def __init__(self):
         super(Sigmoid, self).__init__()
 
-    def _calc_flops_Nd(self, x: TensorSize, y: TensorSize):
+    def _calc_flops(self, x: TensorSize, y: TensorSize):
         bsin = x.value[0]
         bsout = y.value[0]
         assert bsin == bsout, 'Batch size of input and output must be equal'
@@ -53,8 +51,6 @@ class Sigmoid(Module):
             'Type of input must be \'{}\'.'.format(TensorSize.__name__)
 
         y = TensorSize(x._tensor_size)
-
-        self._calc_flops_Nd(x, y)
 
         self._input = x
         self._output = y
@@ -77,7 +73,7 @@ class Softmax(Module):
     def extra_repr(self):
         return 'dim={dim}'.format(dim=self.dim)
 
-    def _calc_flops_Nd(self, x: TensorSize, y: TensorSize):
+    def _calc_flops(self, x: TensorSize, y: TensorSize):
         bsin = x.value[0]
         bsout = y.value[0]
         assert bsin == bsout, 'Batch size of input and output must be equal'
@@ -91,8 +87,6 @@ class Softmax(Module):
             'Type of input must be \'{}\'.'.format(TensorSize.__name__)
 
         y = TensorSize(x._tensor_size)
-
-        self._calc_flops_Nd(x, y)
 
         self._input = x
         self._output = y

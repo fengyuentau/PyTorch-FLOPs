@@ -32,7 +32,7 @@ class BatchNorm2d(Module):
             parameters += ', track_running_stats={track_running_stats}'
         return parameters.format(**self.__dict__)
 
-    def _calc_flops_2d(self, x: TensorSize, y: TensorSize):
+    def _calc_flops(self, x: TensorSize, y: TensorSize):
         bsin, cin, hin, win = x.value
         bsout, cout, hout, wout = y.value
         assert bsin == bsout, 'Batch size of input and output must be equal'
@@ -45,8 +45,6 @@ class BatchNorm2d(Module):
 
         if x.dim == 4:
             y = TensorSize(x.value)
-
-            self._calc_flops_2d(x, y)
 
             self._input = x
             self._output = y
@@ -73,7 +71,7 @@ class L2Norm2d(Module):
             parameters += ', gamma_init={gamma_init}'
         return parameters.format(**self.__dict__)
 
-    def _calc_flops_2d(self, x: TensorSize, y: TensorSize):
+    def _calc_flops(self, x: TensorSize, y: TensorSize):
         bsin, cin, hin, win = x.value
         bsout, cout, hout, wout = y.value
         assert bsin == bsout, 'Batch size of input and output must be equal'
@@ -86,8 +84,6 @@ class L2Norm2d(Module):
 
         if x.dim == 4:
             y = TensorSize(x.value)
-
-            self._calc_flops_2d(x, y)
 
             self._input = x
             self._output = y

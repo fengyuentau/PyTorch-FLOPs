@@ -18,7 +18,7 @@ class Linear(Module):
             parameters += ', bias={bias}'
         return parameters.format(**self.__dict__)
 
-    def _calc_flops_Nd(self, x, y):
+    def _calc_flops(self, x, y):
         bsin = x.value[0]
         bsout = y.value[0]
         assert bsin == bsout, 'Batch size of input and output must be equal'
@@ -32,8 +32,6 @@ class Linear(Module):
         y = [i for i in x.value]
         y[-1] = self.out_features
         y = TensorSize(y)
-
-        self._calc_flops_Nd(x, y)
 
         self._input = x
         self._output = y

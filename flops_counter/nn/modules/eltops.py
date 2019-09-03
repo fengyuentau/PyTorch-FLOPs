@@ -5,7 +5,7 @@ class EltAdd(Module):
     def __init__(self):
         super(EltAdd, self).__init__()
 
-    def _calc_flops_Nd(self, x: TensorSize, y: TensorSize):
+    def _calc_flops(self, x: TensorSize, y: TensorSize):
         bsin = x.value[0]
         bsout = y.value[0]
         assert bsin == bsout, 'Batch size of input and output must be equal'
@@ -22,8 +22,6 @@ class EltAdd(Module):
 
         x = TensorSize(a.value)
         y = TensorSize(a.value)
-
-        self._calc_flops_Nd(x, y)
 
         self._input = x
         self._output = y
@@ -34,7 +32,7 @@ class EltMul(Module):
     def __init__(self):
         super(EltMul, self).__init__()
 
-    def _calc_flops_Nd(self, x: TensorSize, y: TensorSize):
+    def _calc_flops(self, x: TensorSize, y: TensorSize):
         bsin = x.value[0]
         bsout = y.value[0]
         assert bsin == bsout, 'Batch size of input and output must be equal'
@@ -51,8 +49,6 @@ class EltMul(Module):
 
         x = TensorSize(a.value)
         y = TensorSize(a.value)
-
-        self._calc_flops_Nd(x, y)
 
         self._input = x
         self._output = y

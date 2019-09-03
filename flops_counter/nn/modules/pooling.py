@@ -41,7 +41,7 @@ class MaxPool2d(Module):
     def _calc_out(self, i, idx):
         return (i + 2 * self.padding[idx] - self.dilation[idx] * (self.kernel_size[idx] - 1) - 1) // self.stride[idx] + 1
 
-    def _calc_flops_2d(self, x, y):
+    def _calc_flops(self, x, y):
         bsin, cin, hin, win = x.value
         bsout, cout, hout, wout = y.value
         assert bsin == bsout, 'Batch size of input and output must be equal'
@@ -56,8 +56,6 @@ class MaxPool2d(Module):
             hout = self._calc_out(hin, 0)
             wout = self._calc_out(win, 1)
             y = TensorSize([bsin, cin, hout, wout])
-
-            self._calc_flops_2d(x, y)
 
             self._input = x
             self._output = y

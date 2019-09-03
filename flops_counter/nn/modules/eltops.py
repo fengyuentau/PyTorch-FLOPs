@@ -9,7 +9,7 @@ class EltAdd(Module):
         bsin = x.value[0]
         bsout = y.value[0]
         assert bsin == bsout, 'Batch size of input and output must be equal'
-        self._flops = y.nelement
+        self._flops += y.nelement
 
     def forward(self, a: TensorSize, b: TensorSize=None):
         assert isinstance(a, TensorSize), \
@@ -36,7 +36,7 @@ class EltMul(Module):
         bsin = x.value[0]
         bsout = y.value[0]
         assert bsin == bsout, 'Batch size of input and output must be equal'
-        self._flops = y.nelement
+        self._flops += y.nelement
 
     def forward(self, a: TensorSize, b: TensorSize=None):
         assert isinstance(a, TensorSize), \

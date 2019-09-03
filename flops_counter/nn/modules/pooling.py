@@ -45,7 +45,7 @@ class MaxPool2d(Module):
         bsin, cin, hin, win = x.value
         bsout, cout, hout, wout = y.value
         assert bsin == bsout, 'Batch size of input and output must be equal'
-        self._flops = self.kernel_size[0] * self.kernel_size[1] * y.nelement
+        self._flops += self.kernel_size[0] * self.kernel_size[1] * y.nelement
 
     def forward(self, x: TensorSize):
         assert isinstance(x, TensorSize), \

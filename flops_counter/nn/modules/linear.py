@@ -22,7 +22,7 @@ class Linear(Module):
         bsin = x.value[0]
         bsout = y.value[0]
         assert bsin == bsout, 'Batch size of input and output must be equal'
-        self._flops = (2 * self.in_features - (0 if self.bias else 1)) * self.out_features * bsout
+        self._flops += (2 * self.in_features - (0 if self.bias else 1)) * self.out_features * bsout
 
     def forward(self, x: TensorSize):
         assert isinstance(x, TensorSize), \

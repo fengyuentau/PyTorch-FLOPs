@@ -45,7 +45,7 @@ class Upsample(Module):
         bsin, cin, hin, win = x.value
         bsout, cout, hout, wout = y.value
         assert bsin == bsout, 'Batch size of input and output must be equal'
-        self._flops = 13 * abs(y.nelement - x.nelement)
+        self._flops += 13 * abs(y.nelement - x.nelement)
 
     def forward(self, x: TensorSize):
         assert isinstance(x, TensorSize), \

@@ -23,7 +23,7 @@ class ReLU(Module):
         bsin = x.value[0]
         bsout = y.value[0]
         assert bsin == bsout, 'Batch size of input and output must be equal'
-        self._flops = 2 * y.nelement
+        self._flops += 2 * y.nelement
 
     def forward(self, x: TensorSize):
         assert isinstance(x, TensorSize), \
@@ -44,7 +44,7 @@ class Sigmoid(Module):
         bsin = x.value[0]
         bsout = y.value[0]
         assert bsin == bsout, 'Batch size of input and output must be equal'
-        self._flops = 3 * y.nelement
+        self._flops += 3 * y.nelement
 
     def forward(self, x: TensorSize):
         assert isinstance(x, TensorSize), \
@@ -80,7 +80,7 @@ class Softmax(Module):
 
         ondim = y.value[self.dim]
         # flops_softmax = bsout * ((2 * h * w - 1) + h * w) * c = bsout * (3hwc - c)
-        self._flops = 3 * y.nelement - ondim * bsout
+        self._flops += 3 * y.nelement - ondim * bsout
 
     def forward(self, x: TensorSize):
         assert isinstance(x, TensorSize), \

@@ -36,7 +36,7 @@ class BatchNorm2d(Module):
         bsin, cin, hin, win = x.value
         bsout, cout, hout, wout = y.value
         assert bsin == bsout, 'Batch size of input and output must be equal'
-        self._flops = 6 * y.nelement
+        self._flops += 6 * y.nelement
 
     def forward(self, x: TensorSize):
         assert isinstance(x, TensorSize), \
@@ -75,7 +75,7 @@ class L2Norm2d(Module):
         bsin, cin, hin, win = x.value
         bsout, cout, hout, wout = y.value
         assert bsin == bsout, 'Batch size of input and output must be equal'
-        self._flops = 3 * y.nelement
+        self._flops += 3 * y.nelement
 
     def forward(self, x: TensorSize):
         assert isinstance(x, TensorSize), \

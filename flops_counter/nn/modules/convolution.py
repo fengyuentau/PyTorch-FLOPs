@@ -56,7 +56,7 @@ class Conv2d(Module):
         bsin, cin, hin, win = x.value
         bsout, cout, hout, wout = y.value
         assert bsin == bsout, 'Batch size of input and output must be equal'
-        self._flops = (2 * cin * self.kernel_size[0] * self.kernel_size[1] - (0 if self.bias else 1)) * (cout // self.groups) * hout * wout * bsout
+        self._flops += (2 * cin * self.kernel_size[0] * self.kernel_size[1] - (0 if self.bias else 1)) * (cout // self.groups) * hout * wout * bsout
 
     def forward(self, x: TensorSize):
         assert isinstance(x, TensorSize), \
@@ -132,7 +132,7 @@ class ConvTranspose2d(Module):
         bsin, cin, hin, win = x.value
         bsout, cout, hout, wout = y.value
         assert bsin == bsout, 'Batch size of input and output must be equal'
-        self._flops = (2 * cin * self.kernel_size[0] * self.kernel_size[1] - (0 if self.bias else 1)) * (cout // self.groups) * (hout * wout - self.output_padding[0] * self.output_padding[1]) * bsout
+        self._flops += (2 * cin * self.kernel_size[0] * self.kernel_size[1] - (0 if self.bias else 1)) * (cout // self.groups) * (hout * wout - self.output_padding[0] * self.output_padding[1]) * bsout
 
     def forward(self, x: TensorSize):
         assert isinstance(x, TensorSize), \

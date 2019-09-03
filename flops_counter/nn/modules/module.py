@@ -30,6 +30,8 @@ class Module(object):
     def __call__(self, *input, **kwargs):
         result = self.forward(*input, **kwargs)
         self._calc_flops(input[0], result)
+        self._input = input[0]
+        self._output = result
         return result
 
     def add_module(self, name, module):
@@ -47,6 +49,14 @@ class Module(object):
             raise KeyError('module name can\'t be empty string ""')
         self._modules[name] = module
 
+    def __getattr__(self, name):
+        if '_modules' in self.__dict__:
+            modules = self.__dict__['_modules']
+            if name in modules:
+                return modules[name]
+        raise AttributeError("'{}' object has no attribute '{}'".format(
+            type(self).__name__, name))
+
     def __setattr__(self, name, value):
         def remove_from(dicts):
             for d in dicts:
@@ -58,9 +68,10 @@ class Module(object):
             if modules is None:
                 raise AttributeError(
                     'cannot assign module before Module.__init__() call')
-            # remove_from(self.__dict__)
+            remove_from(self.__dict__)
             modules[name] = value
-        object.__setattr__(self, name, value)
+        else:
+            object.__setattr__(self, name, value)
 
     def _get_name(self):
         return self.__class__.__name__
@@ -99,15 +110,17 @@ class Module(object):
         return main_str
 
     def _calc_flops(self, x, y):
-        if not bool(self._modules):
-            return self._flops
-
-        if self._flops != 0:
-            self._flops = int(0)
         for name, module in self._modules.items():
             if module is not None and isinstance(module, Module):
                 self._flops += module._flops
-        # return self._flops
+
+    def set_flops_zero(self):
+        self._flops = 0
+        for name, module in self._modules.items():
+            if module is not None and isinstance(module, Module):
+                module.set_flops_zero()
+            else:
+                module._flops = 0
 
     @property
     def flops(self):

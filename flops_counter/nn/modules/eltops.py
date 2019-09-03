@@ -23,9 +23,6 @@ class EltAdd(Module):
         x = TensorSize(a.value)
         y = TensorSize(a.value)
 
-        self._input = x
-        self._output = y
-
         return y
 
 class EltMul(Module):
@@ -49,8 +46,5 @@ class EltMul(Module):
 
         x = TensorSize(a.value)
         y = TensorSize(a.value)
-
-        self._input = x
-        self._output = y
 
         return y

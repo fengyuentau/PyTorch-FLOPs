@@ -13,8 +13,6 @@ class _ConstantPadNd(Module):
     def forward(self, input: TensorSize):
         y = F.pad(input, self.padding, 'constant', self.value)
 
-        self._input = input
-        self._output = y
         return y
 
     def extra_repr(self):

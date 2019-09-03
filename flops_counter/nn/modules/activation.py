@@ -31,9 +31,6 @@ class ReLU(Module):
 
         y = TensorSize(x._tensor_size)
 
-        self._input = x
-        self._output = y
-
         return y
 
 class Sigmoid(Module):
@@ -51,9 +48,6 @@ class Sigmoid(Module):
             'Type of input must be \'{}\'.'.format(TensorSize.__name__)
 
         y = TensorSize(x._tensor_size)
-
-        self._input = x
-        self._output = y
 
         return y
 
@@ -87,8 +81,5 @@ class Softmax(Module):
             'Type of input must be \'{}\'.'.format(TensorSize.__name__)
 
         y = TensorSize(x._tensor_size)
-
-        self._input = x
-        self._output = y
 
         return y

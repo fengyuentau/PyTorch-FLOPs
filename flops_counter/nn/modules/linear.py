@@ -33,7 +33,4 @@ class Linear(Module):
         y[-1] = self.out_features
         y = TensorSize(y)
 
-        self._input = x
-        self._output = y
-
         return y

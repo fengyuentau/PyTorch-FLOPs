@@ -46,9 +46,6 @@ class BatchNorm2d(Module):
         if x.dim == 4:
             y = TensorSize(x.value)
 
-            self._input = x
-            self._output = y
-
             return y
         else:
             raise NotImplementedError('Not implemented yet for \'{:s}\' with dimension {:d} != 4.'.format(TensorSize.__name__, x.dim))
@@ -84,9 +81,6 @@ class L2Norm2d(Module):
 
         if x.dim == 4:
             y = TensorSize(x.value)
-
-            self._input = x
-            self._output = y
 
             return y
         else:

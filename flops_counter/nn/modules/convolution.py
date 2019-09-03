@@ -69,9 +69,6 @@ class Conv2d(Module):
             wout = self._calc_out(win, 1)
             y = TensorSize([bsin, self.out_channels, hout, wout])
 
-            self._input = x
-            self._output = y
-
             return y
         else:
             raise NotImplementedError('Not implemented yet for \'{:s}\' with dimension {:d} != 4.'.format(TensorSize.__name__, x.dim))
@@ -144,9 +141,6 @@ class ConvTranspose2d(Module):
             hout = self._calc_out(hin, 0)
             wout = self._calc_out(win, 1)
             y = TensorSize([bsin, self.out_channels, hout, wout])
-
-            self._input = x
-            self._output = y
 
             return y
         else:

@@ -214,16 +214,25 @@ class SRN(nn.Module):
 
         c4_lateral = self.c4_lateral(c4)
         c5_lateral_up = self.upsample(c5_lateral)
+        if c5_lateral_up.value[2] != c4_lateral.value[2] or c5_lateral_up.value[3] != c4_lateral.value[3]:
+            pad = (0, c4_lateral.value[3] - c5_lateral_up.value[3], 0, c4_lateral.value[2] - c5_lateral_up.value[2])
+            c5_lateral_up = F.pad(c5_lateral_up, pad)
         sum_4 = self.eltadd(c4_lateral, c5_lateral_up)
         p4 = self.p4_conv(sum_4)
 
         c3_lateral = self.c3_lateral(c3)
         sum_4_up = self.upsample(sum_4)
+        if sum_4_up.value[2] != c3_lateral.value[2] or sum_4_up.value[3] != c3_lateral.value[3]:
+            pad = (0, c3_lateral.value[3] - sum_4_up.value[3], 0, c3_lateral.value[2] - sum_4_up.value[2])
+            sum_4_up = F.pad(sum_4_up, pad)
         sum_3 = self.eltadd(sum_4_up, c3_lateral)
         p3 = self.p3_conv(sum_3)
 
         c2_lateral = self.c2_lateral(c2)
         sum_3_up = self.upsample(sum_3)
+        if sum_3_up.value[2] != c2_lateral.value[2] or sum_3_up.value[3] != c2_lateral.value[3]:
+            pad = (0, c2_lateral.value[3] - sum_3_up.value[3], 0, c2_lateral.value[2] - sum_3_up.value[2])
+            sum_3_up = F.pad(sum_3_up, pad)
         sum_2 = self.eltadd(sum_3_up, c2_lateral)
         p2 = self.p2_conv(sum_2)
 

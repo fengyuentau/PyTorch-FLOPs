@@ -160,3 +160,8 @@ class ModuleList(Module):
         for i, module in enumerate(modules):
             self.add_module(str(offset + i), module)
         return self
+
+    def settle(self, x, y):
+        self._calc_flops(x, y)
+        self._input = x
+        self._output = y

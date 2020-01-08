@@ -82,7 +82,7 @@ def calc_shrink(height, width):
     return shrink, max_shrink
 
 
-def calc_flops(net, image, shrink=1, flip=True, max_downsample=16):
+def calc_flops(net, image, shrink=1, flip=False, max_downsample=16):
     image_shape = [3, image.size[1], image.size[0]]
     if shrink != 1:
         h, w = int(image_shape[1] * shrink), int(image_shape[2] * shrink)
@@ -126,6 +126,7 @@ if __name__ == '__main__':
     img_total = get_set_size(ANNOTATION)
     flops_avg = 0
     flops_total = int(0)
+    cnt_s = [0] * 4
     with open(ANNOTATION, 'r') as annofile:
         for line in annofile:
             if '.jpg' in line:
@@ -137,11 +138,19 @@ if __name__ == '__main__':
                 # calculate shrink
                 shrink, max_im_shrink = calc_shrink(img.size[1], img.size[0])
 
+                flops_det0, flops_det1, flops_det2, flops_det3, flops_det4 = int(0), int(0), int(0), int(0), int(0)
+
+
                 # det0 and det1 (det1 is the flipped version of det0)
-                flops_det01 = calc_flops(net, img, shrink, flip=True)
+                flops_det0 = calc_flops(net, img, shrink, flip=False)
+                # flops_det0 = calc_flops(net, img, 1, flip=False)
+                flops_det1 = flops_det0
+                flops_det01 = flops_det0 + flops_det1
+
                 # det2
                 st = 0.5 if max_im_shrink >= 0.75 else 0.5 * max_im_shrink
                 flops_det2 = calc_flops(net, img, st, flip=False)
+
                 # det3
                 bt = min(2, max_im_shrink) if max_im_shrink > 1 else (st + max_im_shrink) / 2
                 flops_det3 = calc_flops(net, img, bt, flip=False)
@@ -151,12 +160,18 @@ if __name__ == '__main__':
                         flops_det3 += calc_flops(net, img, bt, flip=False)
                         bt *= 2
                     flops_det3 += calc_flops(net, img, max_im_shrink, flip=False)
+
                 # det4
                 flops_det4 = calc_flops(net, img, 0.25, flip=False)
-                st = [0.75, 1.25, 1.5, 1.75]
+                # st = 0.75 # 0.75, 1.25, 1.5, 1.75
+                # if st <= max_im_shrink:
+                #     flops_det4 += calc_flops(net, img, st, flip=False)
+                st = [0.75, 1.25, 1.5, 1.75] # [0.75, 1.25, 1.5, 1.75]
                 for i in range(len(st)):
                     if (st[i] <= max_im_shrink):
+                        # cnt_s[i] += 1
                         flops_det4 += calc_flops(net, img, st[i], flip=False)
+
                 # sum
                 flops = flops_det01 + flops_det2 + flops_det3 + flops_det4
 
@@ -169,3 +184,4 @@ if __name__ == '__main__':
                 sys.stdout.write('-> Profiling model {:s}:: {:d}/{:d}, avg FLOPs: {:,d}, total FLOPs: {:,d}'.format(net.name, img_cnt, img_total, flops_avg, flops_total))
                 sys.stdout.flush()
     print('\n')
+    # print(cnt_s)

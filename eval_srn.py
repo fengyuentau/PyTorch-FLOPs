@@ -47,7 +47,7 @@ def build_net():
     return net
 
 
-def calc_flops(net, image, shrink=1, flip=True, max_downsample=16):
+def calc_flops(net, image, shrink=1, flip=False, max_downsample=16):
     image_shape = image.shape
     if shrink != 1:
         x = cv2.resize(img, None, None, fx=shrink, fy=shrink, interpolation=cv2.INTER_LINEAR)
@@ -104,7 +104,7 @@ if __name__ == '__main__':
                 img_h, img_w, img_c = img.shape
                 if img_h * img_w < largest_input:
                     # det0 and det1 (0-original, 1-flip)
-                    flops_det01 = calc_flops(net, img, 1, flip=True)
+                    flops_det01 = calc_flops(net, img, 1, flip=False)
                     # det2 (shrink 0.5)
                     flops_det2 = calc_flops(net, img, 0.5, flip=False)
                     # det3 (enlarge)
@@ -118,7 +118,7 @@ if __name__ == '__main__':
                 else:
                     largest_ratio = math.sqrt(largest_input / img_w / img_h)
                     # det0 and det1 (0-largest, 1-largest's flip)
-                    flops_det01 = calc_flops(net, img, largest_ratio, flip=True)
+                    flops_det01 = calc_flops(net, img, largest_ratio, flip=False)
                     # det2 (shrink 0.75)
                     flops_det2 = calc_flops(net, img, 0.75, flip=False)
                     # det3 (shrink 0.5)

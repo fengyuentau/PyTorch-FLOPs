@@ -51,7 +51,7 @@ def calc_shrink(h, w):
     return shrink, max_im_shrink
 
 
-def calc_flops(net, img, scale=1, flip=True, max_downsample=16):
+def calc_flops(net, img, scale=1, flip=False, max_downsample=16):
     img_h, img_w = img.shape[:2]
     img_h_new, img_w_new = int(np.ceil(scale * img_h / 16) * 16), int(np.ceil(scale * img_w / 16) * 16)
     scale_h, scale_w = img_h_new / img_h, img_w_new / img_w
@@ -96,6 +96,7 @@ if __name__ == '__main__':
     img_total = get_set_size(ANNOTATION)
     flops_avg = 0
     flops_total = int(0)
+    # cnt_s = [0] * 5
     with open(ANNOTATION, 'r') as annofile:
         for line in annofile:
             if '.jpg' in line:
@@ -105,14 +106,23 @@ if __name__ == '__main__':
 
                 # calculate shrink
                 shrink, max_im_shrink = calc_shrink(img.shape[0], img.shape[1])
+                flops = int(0)
 
+                flops = calc_flops(net, img, 1, flip=False)
                 flops = int(0)
                 # run profile at set ratio
                 for scale in st:
                     if scale in [0.25, 0.5, 0.75, 1]:
                         flops += calc_flops(net, img, scale, flip=True)
+                        # pass
                     elif scale <= max_im_shrink:
                         flops += calc_flops(net, img, scale, flip=True)
+                        # if scale == 1.25: i = 0
+                        # elif scale == 1.50: i = 1
+                        # elif scale == 1.75: i = 2
+                        # elif scale == 2.00: i = 3
+                        # else: i = 4
+                        # cnt_s[i] += 1
 
                 # statistics
                 img_cnt += 1
@@ -123,3 +133,4 @@ if __name__ == '__main__':
                 sys.stdout.write('-> Profiling model {:s}:: {:d}/{:d}, avg FLOPs: {:,d}, total FLOPs: {:,d}'.format(net.name, img_cnt, img_total, flops_avg, flops_total))
                 sys.stdout.flush()
     print('\n')
+    # print(cnt_s)

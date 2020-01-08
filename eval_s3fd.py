@@ -14,7 +14,7 @@ ossystem = platform.system()
 osrelease = platform.release()
 DEFAULT_WIDERFACE_ROOT = '/Users/fengyuantao/playground/dataset/WIDER_FACE'
 if ossystem == 'Darwin':
-    DEFAULT_WIDERFACE_ROOT = '/Users/fengyuantao/playground/dataset/WIDER_FACE'
+    DEFAULT_WIDERFACE_ROOT = '//Users/fengyuantao/playground/datasets/widerface'
 elif ossystem == 'Linux':
     if osrelease == '4.15.0-54-generic':
         DEFAULT_WIDERFACE_ROOT = '/home/tau/Documents/dataset/WiderFace'
@@ -51,15 +51,15 @@ def calc_shrink(h, w):
     return shrink, max_im_shrink
 
 
-def calc_flops(net, img, scale=1, flip=True, max_downsample=16):
-    img_h, img_w = img.shape[:2]
-    img_h_new, img_w_new = int(np.ceil(scale * img_h / 16) * 16), int(np.ceil(scale * img_w / 16) * 16)
-    scale_h, scale_w = img_h_new / img_h, img_w_new / img_w
+def calc_flops(net, img, scale=1, flip=False, max_downsample=16):
+    img_h, img_w, img_c = img.shape[:3]
+    if scale != 1:
+        img_h_new, img_w_new = int(np.ceil(scale * img_h / 16) * 16), int(np.ceil(scale * img_w / 16) * 16)
+        scale_h, scale_w = img_h_new / img_h, img_w_new / img_w
+        img_s = cv2.resize(img, None, None, fx=scale_w, fy=scale_h, interpolation=cv2.INTER_LINEAR)
+        img_h, img_w, img_c = img_s.shape
 
-    img_s = cv2.resize(img, None, None, fx=scale_w, fy=scale_h, interpolation=cv2.INTER_LINEAR)
-
-    img_s_h, img_s_w, img_s_c = img_s.shape
-    x = flops_counter.TensorSize([1, img_s_c, img_s_h, img_s_w])
+    x = flops_counter.TensorSize([1, img_c, img_h, img_w])
 
     net(x)
     flops = net.flops * 2 if flip else net.flops
@@ -107,6 +107,8 @@ if __name__ == '__main__':
                 flops_det01 = int(0)
                 flops_det2 = int(0)
                 flops_det3 = int(0)
+
+                flops_det01 = calc_flops(net, img, 1, flip=False)
                 # det0 and det1 (det1 is the flipped version of det0)
                 flops_det01 = calc_flops(net, img, shrink, flip=True)
                 # det2
@@ -117,7 +119,7 @@ if __name__ == '__main__':
                 flops_det3 = calc_flops(net, img, bt, flip=False)
                 if max_im_shrink > 2:
                     bt *= 2
-                    while bt < max_im_shrink:
+                    while bt < max_im_shrink: # triger twice at val set, trigger 10 times at test set
                         flops_det3 += calc_flops(net, img, bt, flip=False)
                         bt *= 2
                     flops_det3 += calc_flops(net, img, max_im_shrink, flip=False)

@@ -126,7 +126,7 @@ if __name__ == '__main__':
 
                 flops = int(0)
 
-                # pyramid or not
+                pyramid or not
                 if args.pyramid:
                     base_scale = calc_scale(img.shape[0:2], pyramid_base_size[0], pyramid_base_size[1])
                     pyramid_scales = [ float(scale)/pyramid_base_size[0]*base_scale for scale in scales]
@@ -135,6 +135,7 @@ if __name__ == '__main__':
                 else:
                     im_scale = calc_scale(img.shape[0:2], scales[0], max_size)
                     flops += calc_flops(net, img, im_scale)
+                # flops += calc_flops(net, img, 1)
 
                 # statistics
                 img_cnt += 1

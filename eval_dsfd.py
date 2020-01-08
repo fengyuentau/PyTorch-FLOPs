@@ -52,7 +52,7 @@ def calc_shrink(h, w):
     return shrink, max_im_shrink
 
 
-def calc_flops(net, img, shrink=1, flip=True, max_downsample=16):
+def calc_flops(net, img, shrink=1, flip=False, max_downsample=16):
     x = img
     if shrink != 1:
         x = cv2.resize(img, None, None, fx=shrink, fy=shrink, interpolation=cv2.INTER_LINEAR)
@@ -93,6 +93,7 @@ if __name__ == '__main__':
     img_total = get_set_size(ANNOTATION)
     flops_avg = 0
     flops_total = int(0)
+    # cnt_s = [0] * 3
     with open(ANNOTATION, 'r') as annofile:
         for line in annofile:
             if '.jpg' in line:
@@ -100,9 +101,12 @@ if __name__ == '__main__':
                 imgpath = osp.join(IMGROOT, line.strip()) # the name of the first image: /0--Parade/0_Parade_marchingband_1_737.jpg
                 img = cv2.imread(imgpath) # img.shape <- [height, width, channel]
 
+                flops_det01, flops_det2, flops_det3, flops_det4 = int(0), int(0), int(0), int(0)
+
                 # calculate shrink
                 shrink, max_im_shrink = calc_shrink(img.shape[0], img.shape[1])
 
+                # flops_det01 = calc_flops(net, img, 1, flip=False)
                 # det0 and det1 (det1 is the flipped version of det0)
                 flops_det01 = calc_flops(net, img, shrink, flip=True)
                 # det2
@@ -126,6 +130,7 @@ if __name__ == '__main__':
                 st = [1.25, 1.75, 2.25]
                 for i in range(len(st)):
                     if (st[i] <= max_im_shrink):
+                        # cnt_s[i] += 1
                         flops_det4 += calc_flops(net, img, st[i], flip=False)
                 # sum
                 flops = flops_det01 + flops_det2 + flops_det3 + flops_det4
@@ -139,3 +144,4 @@ if __name__ == '__main__':
                 sys.stdout.write('-> Profiling model {:s}:: {:d}/{:d}, avg FLOPs: {:,d}, total FLOPs: {:,d}'.format(net.name, img_cnt, img_total, flops_avg, flops_total))
                 sys.stdout.flush()
     print('\n')
+    # print(cnt_s)

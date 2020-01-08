@@ -6,3 +6,4 @@
 *.txt
 **/.vscode
 **/.vscode/**
+*.ipynb

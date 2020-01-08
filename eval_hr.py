@@ -87,8 +87,8 @@ if __name__ == '__main__':
 
     net = build_net()
 
-    # scales = [-2, -1, 0, 1]
-    scales = [0]
+    scales = [-2, -1, 0, 1]
+    # scales = [0]
 
     img_cnt = 0
     img_total = get_set_size(ANNOTATION)

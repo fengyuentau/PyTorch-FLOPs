@@ -314,6 +314,9 @@ class PyramidBox(nn.Module):
                 head_confs.append(head_conf1.permute(0, 2, 3, 1))
             # print(temp_conf)
 
+        self.mbox_loc.settle(inputs[0], mbox_loc)
+        self.mbox_conf.settle(inputs[0], temp_conf)
+
         face_conf = flops_counter.cat([o.view(o.value[0], -1) for o in face_confs], 1)
 
         head_conf = flops_counter.cat([o.view(o.value[0], -1) for o in head_confs], 1)

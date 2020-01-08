@@ -152,11 +152,15 @@ class DSFD(nn.Module):
         sources[5] = self.cpm7_2(sources[5])
 
         # apply multibox head to source layers
+        loc = list()
         conf = list()
         for x, l, c in zip(sources, self.loc, self.conf):
-            l(x)
+            # l(x)
+            loc.append(l(x).permute(0, 2, 3, 1))
             # mio: max_in_out
             conf.append(c(x).permute(0, 2, 3, 1))
+        self.loc.settle(sources[0], loc[-1].permute(0, 3, 1, 2))
+        self.conf.settle(sources[0], conf[-1].permute(0, 3, 1, 2))
         # face_conf = flops_counter.cat([flops_counter.view([o[1], o[2], 2], (1, -1)) for o in conf], 1)
         # output = self.softmax(flops_counter.view(face_conf, (1, -1, 2)))
         face_confs = list()

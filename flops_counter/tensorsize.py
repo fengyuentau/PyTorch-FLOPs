@@ -81,6 +81,13 @@ class TensorSize(object):
             del dst[dim]
         return TensorSize(dst)
 
+    def size(self, dim=None):
+        if dim is not None:
+            return self._tensor_size[dim]
+        return self
+
+    def __neg__(self):
+        return TensorSize(copy.deepcopy(self._tensor_size))
 
     @property
     def nelement(self):

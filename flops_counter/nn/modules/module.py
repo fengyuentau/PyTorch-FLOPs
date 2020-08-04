@@ -112,6 +112,8 @@ class Module(object):
     def _calc_flops(self, x, y):
         self._flops = 0 # setting self._flops zero to avoid repeatedly accumulated
         for name, module in self._modules.items():
+            if 'ModuleList' in str(type(module)):
+                module._flops = sum([m._flops for m in list(module._modules.values())])
             if module is not None and isinstance(module, Module):
                 self._flops += module._flops
 

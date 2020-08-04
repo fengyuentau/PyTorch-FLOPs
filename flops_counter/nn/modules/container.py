@@ -1,6 +1,7 @@
 from collections import OrderedDict
 from itertools import islice
 import operator
+import warnings
 
 from flops_counter._six import container_abcs
 from .module import Module
@@ -162,6 +163,7 @@ class ModuleList(Module):
         return self
 
     def settle(self, x, y):
+        warnings.warn('nn.ModuleList.settle will be deprecated soon. Now the calculation of FLOPs of ModuleList is integrated in Module._calc_flops')
         self._calc_flops(x, y)
         self._input = x
         self._output = y

@@ -114,6 +114,8 @@ class Module(object):
         for name, module in self._modules.items():
             if 'ModuleList' in str(type(module)):
                 module._flops = sum([m._flops for m in list(module._modules.values())])
+            if 'Sequential' in str(type(module)) and module._flops == 0:
+                module._flops = sum([m._flops for m in module])
             if module is not None and isinstance(module, Module):
                 self._flops += module._flops
 

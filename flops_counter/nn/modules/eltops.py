@@ -18,7 +18,7 @@ class EltAdd(Module):
             assert isinstance(b, TensorSize), \
                 'Type of input must be \'{}\'.'.format(TensorSize.__name__)
             assert a.dim == b.dim, 'Dimension of a and b must be equal.'
-            assert a.value == b.value, 'Size of a and b must be equal.'
+            assert a.value == b.value, 'Size of {} and {} must be equal.'.format(a.value, b.value)
 
         x = TensorSize(a.value)
         y = TensorSize(a.value)
@@ -42,7 +42,7 @@ class EltMul(Module):
             assert isinstance(b, TensorSize), \
                 'Type of input must be \'{}\'.'.format(TensorSize.__name__)
             assert a.dim == b.dim, 'Dimension of a and b must be equal.'
-            assert a.value == b.value, 'Size of a and b must be equal.'
+            assert a.value == b.value, 'Size of {} and {} must be equal.'.format(a.value, b.value)
 
         x = TensorSize(a.value)
         y = TensorSize(a.value)

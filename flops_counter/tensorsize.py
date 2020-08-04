@@ -89,6 +89,9 @@ class TensorSize(object):
     def __neg__(self):
         return TensorSize(copy.deepcopy(self._tensor_size))
 
+    def __mul__(self, other):
+        return TensorSize(copy.deepcopy(self._tensor_size))
+
     @property
     def nelement(self):
         return reduce((lambda a, b: a * b), self._tensor_size)

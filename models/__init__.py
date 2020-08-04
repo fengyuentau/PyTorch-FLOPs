@@ -7,8 +7,9 @@ from .ssh import SSH
 from .hr import HR
 from .lffd import LFFDv1, LFFDv2
 from .faceboxes import FaceBoxes
+from .ulfg import ULFG
 
 __all__ =[
     'CSP', 'DSFD', 'PyramidBox', 'SRN', 'S3FD', 'SSH', 'HR',
-    'LFFDv1', 'LFFDv2', 'FaceBoxes'
+    'LFFDv1', 'LFFDv2', 'FaceBoxes', 'ULFG'
 ]

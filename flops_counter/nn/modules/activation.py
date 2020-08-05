@@ -62,6 +62,38 @@ class LeakyReLU(Module):
 
         return y
 
+class PReLU(Module):
+    __constants__ = ['num_parameters', 'init']
+
+    def __init__(self, num_parameters=1, init=0.25):
+        super(PReLU, self).__init__()
+
+        self.num_parameters = num_parameters
+        self.init = init
+
+    def extra_repr(self):
+        parameters = ''
+        parameters += 'num_parameters={num_parameters}'
+        parameters += ', init={init}'
+        return parameters.format(**self.__dict__)
+
+    def _calc_flops(self, x: TensorSize, y: TensorSize):
+        bsin = x.value[0]
+        bsout = y.value[0]
+        assert bsin == bsout, 'Batch size of input and output must be equal'
+        if self.num_parameters != 1:
+            assert self.num_parameters == x.value[1], 'num_parameters must either be equal to 1 or the channels of input tensor.'
+        self._flops += 6 * y.nelement
+
+    def forward(self, x: TensorSize):
+        assert isinstance(x, TensorSize), \
+            'Type of input must be \'{}\'.'.format(TensorSize.__name__)
+        if self.num_parameters != 1:
+            assert self.num_parameters == x.value[1], 'num_parameters must either be equal to 1 or the channels of input tensor.'
+
+        y = TensorSize(x._tensor_size)
+
+        return y
 
 class Sigmoid(Module):
     def __init__(self):

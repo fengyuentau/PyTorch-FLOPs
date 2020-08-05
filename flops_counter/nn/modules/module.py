@@ -112,12 +112,34 @@ class Module(object):
     def _calc_flops(self, x, y):
         self._flops = 0 # setting self._flops zero to avoid repeatedly accumulated
         for name, module in self._modules.items():
-            if 'ModuleList' in str(type(module)):
+            if 'ModuleList' in str(type(module)) and module._flops == 0:
                 module._flops = sum([m._flops for m in list(module._modules.values())])
             if 'Sequential' in str(type(module)) and module._flops == 0:
                 module._flops = sum([m._flops for m in module])
+            if 'ModuleDict' in str(type(module)) and module._flops == 0:
+                module._flops = sum([v._flops for k, v in module])
             if module is not None and isinstance(module, Module):
                 self._flops += module._flops
+
+    def named_children(self):
+        r"""Returns an iterator over immediate children modules, yielding both
+        the name of the module as well as the module itself.
+
+        Yields:
+            (string, Module): Tuple containing a name and child module
+
+        Example::
+
+            >>> for name, module in model.named_children():
+            >>>     if name in ['conv4', 'conv5']:
+            >>>         print(module)
+
+        """
+        memo = set()
+        for name, module in self._modules.items():
+            if module is not None and module not in memo:
+                memo.add(module)
+                yield name, module
 
     def set_flops_zero(self):
         self._flops = 0

@@ -33,6 +33,36 @@ class ReLU(Module):
 
         return y
 
+class LeakyReLU(Module):
+    __constants__ = ['negative_slope', 'inplace']
+
+    def __init__(self, negative_slope=0.01, inplace=False):
+        super(LeakyReLU, self).__init__()
+
+        self.negative_slope = negative_slope
+        self.inplace = inplace
+
+    def extra_repr(self):
+        parameters = ''
+        parameters += 'negative_slope={negative_slope}'
+        parameters += ', inplace={inplace}'
+        return parameters.format(**self.__dict__)
+
+    def _calc_flops(self, x: TensorSize, y: TensorSize):
+        bsin = x.value[0]
+        bsout = y.value[0]
+        assert bsin == bsout, 'Batch size of input and output must be equal'
+        self._flops += 6 * y.nelement
+
+    def forward(self, x: TensorSize):
+        assert isinstance(x, TensorSize), \
+            'Type of input must be \'{}\'.'.format(TensorSize.__name__)
+
+        y = TensorSize(x._tensor_size)
+
+        return y
+
+
 class Sigmoid(Module):
     def __init__(self):
         super(Sigmoid, self).__init__()

@@ -167,3 +167,96 @@ class ModuleList(Module):
         self._calc_flops(x, y)
         self._input = x
         self._output = y
+
+class ModuleDict(Module):
+    def __init__(self, modules=None):
+        super(ModuleDict, self).__init__()
+        if modules is not None:
+            self.update(modules)
+
+    def __getitem__(self, key):
+        return self._modules[key]
+
+    def __setitem__(self, key, module):
+        self.add_module(key, module)
+
+    def __delitem__(self, key):
+        del self._modules[key]
+
+    def __len__(self):
+        return len(self._modules)
+
+    def __iter__(self):
+        return iter(self._modules)
+
+    def __contains__(self, key):
+        return key in self._modules
+
+    def clear(self):
+        """Remove all items from the ModuleDict.
+        """
+        self._modules.clear()
+
+    def pop(self, key):
+        r"""Remove key from the ModuleDict and return its module.
+
+        Arguments:
+            key (string): key to pop from the ModuleDict
+        """
+        v = self[key]
+        del self[key]
+        return v
+
+    def keys(self):
+        r"""Return an iterable of the ModuleDict keys.
+        """
+        return self._modules.keys()
+
+    def items(self):
+        r"""Return an iterable of the ModuleDict key/value pairs.
+        """
+        return self._modules.items()
+
+    def values(self):
+        r"""Return an iterable of the ModuleDict values.
+        """
+        return self._modules.values()
+
+    def update(self, modules):
+        r"""Update the :class:`~torch.nn.ModuleDict` with the key-value pairs from a
+        mapping or an iterable, overwriting existing keys.
+
+        .. note::
+            If :attr:`modules` is an ``OrderedDict``, a :class:`~torch.nn.ModuleDict`, or
+            an iterable of key-value pairs, the order of new elements in it is preserved.
+
+        Arguments:
+            modules (iterable): a mapping (dictionary) from string to :class:`~torch.nn.Module`,
+                or an iterable of key-value pairs of type (string, :class:`~torch.nn.Module`)
+        """
+        if not isinstance(modules, container_abcs.Iterable):
+            raise TypeError("ModuleDict.update should be called with an "
+                            "iterable of key/value pairs, but got " +
+                            type(modules).__name__)
+
+        if isinstance(modules, container_abcs.Mapping):
+            if isinstance(modules, (OrderedDict, ModuleDict)):
+                for key, module in modules.items():
+                    self[key] = module
+            else:
+                for key, module in sorted(modules.items()):
+                    self[key] = module
+        else:
+            for j, m in enumerate(modules):
+                if not isinstance(m, container_abcs.Iterable):
+                    raise TypeError("ModuleDict update sequence element "
+                                    "#" + str(j) + " should be Iterable; is" +
+                                    type(m).__name__)
+                if not len(m) == 2:
+                    raise ValueError("ModuleDict update sequence element "
+                                     "#" + str(j) + " has length " + str(len(m)) +
+                                     "; 2 is required")
+                self[m[0]] = m[1]
+
+    def forward(self):
+        raise NotImplementedError()

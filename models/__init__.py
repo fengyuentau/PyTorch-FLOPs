@@ -13,9 +13,10 @@ from .retinaface import RetinaFace
 from .yufacedetectnet import YuFaceDetectNet
 from .extd import EXTD
 from .sfa import SFA
+from .shf import SHF
 
 __all__ =[
     'CSP', 'DSFD', 'PyramidBox', 'SRN', 'S3FD', 'SSH', 'HR',
     'LFFDv1', 'LFFDv2', 'FaceBoxes', 'ULFG', 'light_DSFD',
-    'RetinaFace', 'YuFaceDetectNet', 'EXTD', 'SFA'
+    'RetinaFace', 'YuFaceDetectNet', 'EXTD', 'SFA', 'SHF'
 ]

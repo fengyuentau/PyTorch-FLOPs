@@ -5,6 +5,12 @@ import numpy as np
 import scipy.io as io
 
 class WIDERFace(object):
+    r'''Helpes to read images from WIDER Face.
+
+    Args:
+        widerface_root: the root directory of WIDER Face dataset, which contains `eval_tools`, `WIDER_train`, `WIDER_val`, `WIDER_test` and `wider_face_split`.
+        split: one of `['val-easy', 'val-medium', 'val-hard', 'val', 'test']`.
+    '''
     def __init__(self, widerface_root='./data/widerface', split='val'):
         super(WIDERFace, self).__init__()
 

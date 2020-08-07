@@ -1,9 +1,19 @@
+# python caches
 **/__pycache__
 **/__pycache__/**
 *.pyc
+
+# jupyter notebook 
 **/.ipynb_checkpoints/
 **/.ipynb_checkpoints/**
-*.txt
+*.ipynb
+
+# vscode
 **/.vscode
 **/.vscode/**
-*.ipynb
+
+# logs
+*.txt
+
+# softlinks
+data/widerface

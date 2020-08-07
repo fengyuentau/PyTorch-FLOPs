@@ -5,7 +5,7 @@ from .srn import SRN
 from .s3fd import S3FD
 from .ssh import SSH
 from .hr import HR
-from .lffd import LFFDv1, LFFDv2
+from .lffd import LFFD
 from .faceboxes import FaceBoxes
 from .ulfg import ULFG
 from .light_dsfd import light_DSFD
@@ -17,6 +17,6 @@ from .shf import SHF
 
 __all__ =[
     'CSP', 'DSFD', 'PyramidBox', 'SRN', 'S3FD', 'SSH', 'HR',
-    'LFFDv1', 'LFFDv2', 'FaceBoxes', 'ULFG', 'light_DSFD',
+    'LFFD', 'FaceBoxes', 'ULFG', 'light_DSFD',
     'RetinaFace', 'YuFaceDetectNet', 'EXTD', 'SFA', 'SHF'
 ]

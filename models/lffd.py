@@ -201,3 +201,20 @@ class LFFDv2(nn.Module):
     @property
     def name(self):
         return self._get_name() + 'v2'
+
+class LFFD(nn.Module):
+    def __init__(self, version='v1'):
+        super(LFFD, self).__init__()
+
+        available_versions = ['v1', 'v2']
+        version = version.lower()
+        assert version in available_versions, 'version must be one of {}, but {} is not.'.format(available_versions, version)
+
+        self.model = eval('LFFD'+version)()
+
+    def forward(self, x):
+        return self.model(x)
+
+    @property
+    def name(self):
+        return self.modle.name

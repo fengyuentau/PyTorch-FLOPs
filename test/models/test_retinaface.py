@@ -8,3 +8,6 @@ x = fc.TensorSize([1, 3, 224, 210])
 y = model(x)
 print(y, model.flops)
 # print(dsfd)
+
+model.set_flops_zero()
+print(model.flops)

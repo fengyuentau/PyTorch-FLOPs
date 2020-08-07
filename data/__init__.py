@@ -1,3 +1,3 @@
-from .widerface import WIDERFACE
+from .widerface import WIDERFace
 
-__all__ = ['WIDERFACE']
+__all__ = ['WIDERFace']

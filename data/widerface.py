@@ -116,6 +116,10 @@ class WIDERFace(object):
     def __len__(self):
         return len(self.filepaths)
 
+    @property
+    def name(self):
+        return 'WIDER Face ' + self.split
+
 
 if __name__ == '__main__':
     dataset = WIDERFace()

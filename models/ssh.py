@@ -90,8 +90,6 @@ class SSH(nn.Module):
         # get pool6 (it's actually pool5)
         pool6 = self.vgg16[30](out)
 
-        self.vgg16.settle(x, pool6)
-
         # SSH - M3
         M3_output = self.M3(pool6)
         # SSH - M3 - bbox_pred

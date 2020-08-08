@@ -73,7 +73,6 @@ class S3FD(nn.Module):
         conv5_3_norm = self.l2norm_conv5_3(conv5_3)
 
         out = self.vgg16[30](out)
-        self.vgg16.settle(x, conv5_3) # settle for the ModuleList's FLOPs
 
         # get conv_fc7
         out = self.conv_fc6(out)

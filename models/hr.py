@@ -107,7 +107,6 @@ class HR(nn.Module):
         res4bX = res4a
         for i in range(0, 22):
             res4bX = self.res4bX[i](res4bX)
-        self.res4bX.settle(res4a, res4bX)
 
         # Detection Head
         score_res4 = self.score_res4(res4bX)

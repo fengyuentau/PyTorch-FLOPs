@@ -182,7 +182,7 @@ class gated_conv1x1(nn.Module):
         return ret
 
 class InvertedResidual_dwc(nn.Module):
-    def __init__(self, inp, oup, stride, expand_ratio, model_type='32'):
+    def __init__(self, inp, oup, stride, expand_ratio, model_type=32):
         super(InvertedResidual_dwc, self).__init__()
         self.stride = stride
         assert stride in [1, 2]
@@ -198,7 +198,7 @@ class InvertedResidual_dwc(nn.Module):
             self.conv.append(nn.PReLU())
             self.conv.append(nn.Conv2d(hidden_dim, oup, 1, 1, 0, bias=False))
             self.conv.append(nn.BatchNorm2d(oup))
-            if model_type == '32':
+            if model_type == 32:
                 self.conv.append(nn.PReLU())
         else:
             self.conv.append(nn.Conv2d(inp, hidden_dim, 1, 1, 0, bias=False))
@@ -209,7 +209,7 @@ class InvertedResidual_dwc(nn.Module):
             self.conv.append(nn.PReLU())
             self.conv.append(nn.Conv2d(hidden_dim, oup, 1, 1, 0, bias=False))
             self.conv.append(nn.BatchNorm2d(oup))
-            if model_type == '32':
+            if model_type == 32:
                 self.conv.append(nn.PReLU())
 
         self.conv = nn.Sequential(*self.conv)
@@ -258,15 +258,15 @@ class MobileNetV2(nn.Module): #mobileNet v2
             for i in range(n):
                 if cnt>1:
                     if i == n - 1:  # reduce the featuremap in the last.
-                        self.features.append(block_dwc(input_channel, output_channel, s, expand_ratio=t))
+                        self.features.append(block_dwc(input_channel, output_channel, s, expand_ratio=t, model_type=model_type))
                     else:
-                        self.features.append(block_dwc(input_channel, output_channel, 1, expand_ratio=t))
+                        self.features.append(block_dwc(input_channel, output_channel, 1, expand_ratio=t, model_type=model_type))
                     input_channel = output_channel
                 else:
                     if i == n - 1:  # reduce the featuremap in the last.
-                        self.features.append(block_dwc(input_channel, output_channel, s, expand_ratio=t))
+                        self.features.append(block_dwc(input_channel, output_channel, s, expand_ratio=t, model_type=model_type))
                     else:
-                        self.features.append(block_dwc(input_channel, output_channel, 1, expand_ratio=t))
+                        self.features.append(block_dwc(input_channel, output_channel, 1, expand_ratio=t, model_type=model_type))
                     input_channel = output_channel
 
             cnt+=1

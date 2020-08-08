@@ -30,7 +30,7 @@ def flops_eval(dataset, model):
     st = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2.0, 2.25]
 
     flops_total = 0
-    pbar = tqdm(dataset, desc='Evaluating {} on {}'.format(model.name, dataset.name), position=0, leave=False)
+    pbar = tqdm(dataset, desc='Evaluating {} on {}'.format(model.name, dataset.name))
     for img in pbar:
         flops = int(0)
 

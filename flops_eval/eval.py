@@ -69,11 +69,44 @@ def main(args):
     # build dataset
     dataset = WIDERFace(widerface_root=args.widerface_root, split=args.split)
 
+    model_name = ''
+    version = None
+    _model = args.model.lower().split('-')
+    model_name = _model[0]
+    if len(_model) == 2:
+        version = _model[-1]
+
+    available_models = [
+        'CSP',
+        'DSFD',
+        'EXTD', # EXTD-32/48/64
+        'FaceBoxes',
+        'HR',
+        'LFFD', # LFFD-v1/v2
+        'light_DSFD',
+        'PyramidBox',
+        'RetinaFace',
+        'S3FD',
+        'SFA',
+        'SHF',
+        'SRN',
+        'SSH',
+        'ULFG',
+        'YuFaceDetectNet'
+    ]
+    for m in available_models:
+        if m.lower() == model_name:
+            model_name = m
+            break
+
     # build model
-    model  = eval('models.'+args.model)()
+    if model_name in ['EXTD', 'LFFD']:
+        model  = eval('models.'+model_name)(version)
+    else:
+        model  = eval('models.'+model_name)()
 
     # flops_eval
-    mod = importlib.import_module('core.'+args.model.lower())
+    mod = importlib.import_module('core.'+model_name.lower())
     avg_flops = mod.flops_eval(dataset, model)
     print(avg_flops)
     print('Average FLOPs: {}FLOPs'.format(to_scientific(avg_flops)))

@@ -1,18 +1,12 @@
 import sys
 sys.path.append('.')
-from models.csp import CSP
+import flops_counter as fc
+from models import CSP
 
-csp = CSP()
-
-x = [3, 64, 64]
-y = csp(x)
-print(csp.flops)
-
-x = [3, 224, 224]
-y = csp(x)
-print(csp.flops)
-
-
-
-# print(y)
-# print(csp)
+model = CSP()
+# input size either height or width must be dividable by 16,
+# this is due to the model design
+x = fc.TensorSize([1, 3, 224, 112])
+y = model(x)
+print(y, model.flops)
+# print(model)

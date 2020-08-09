@@ -13,7 +13,7 @@ from .hr import HR
 from .retinaface import RetinaFace
 # from .yufacedetectnet import YuFaceDetectNet
 from .extd import EXTD
-# from .sfa import SFA
+from .sfa import SFA
 from .shf import SHF
 
 __all__ =[

@@ -17,7 +17,7 @@ class SFA(nn.Module):
         self.conv5 = self.build_conv_block(in_channels=512, out_channels=512, n_conv=3, with_pool=True)
 
         # M3
-        self.pool6 = nn.MaxPool2d(2)
+        self.pool6 = nn.MaxPool2d(2, 2)
         self.m3 = SSH(self.ssh_in_channels[3], self.ssh_out_channels[3], index=3)
 
         # M2

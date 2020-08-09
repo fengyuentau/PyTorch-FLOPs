@@ -11,7 +11,7 @@ class SHF(nn.Module):
         self.conv3 = self.build_conv_block(128, 256, n_conv=3, with_pool=True)
         self.conv4 = self.build_conv_block(256, 512, n_conv=3)
 
-        self.pool4 = nn.MaxPool2d(2)
+        self.pool4 = nn.MaxPool2d(2, 2)
         self.conv5 = self.build_conv_block(512, 512, n_conv=3)
         self.conv5_256 = self.build_conv_block(512, 256, 1, padding=0, n_conv=1)
         self.conv5_256_up = nn.ConvTranspose2d(256, 256, kernel_size=4, stride=2, padding=1, groups=256, bias=False)
@@ -48,7 +48,7 @@ class SHF(nn.Module):
             ]
         if with_pool:
             layers += [
-                nn.MaxPool2d(2)
+                nn.MaxPool2d(2, 2)
             ]
         return nn.Sequential(*layers)
 

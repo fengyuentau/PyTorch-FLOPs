@@ -107,7 +107,7 @@ class SFA(nn.Module):
         conv5_128_up = self.conv5_128_up(conv5_128)
         #  padding so that conv5_128_up can have the same size as conv4_128
         if conv4_128.value[2] != conv5_128_up.value[2] or conv4_128.value[3] != conv5_128_up.value[3]:
-            pad = (0, conv5_128_up.value[3] - conv4_128.value[3], 0, conv5_128_up.value[2] - conv4_128.value[2])
+            pad = (0, conv4_128.value[3] - conv5_128_up.value[3], 0, conv4_128.value[2] - conv5_128_up.value[2])
             conv5_128_up = F.pad(conv5_128_up, pad)
         conv4_fuse = self.conv4_fuse(conv4_128, conv5_128_up)
         conv4_fuse_final = self.conv4_fuse_final(conv4_fuse)
@@ -119,7 +119,7 @@ class SFA(nn.Module):
         conv4_128_up = self.conv4_128_up(conv4_128)
         #  padding so that conv4_128_up can have the same size as conv3_128
         if conv3_128.value[2] != conv4_128_up.value[2] or conv3_128.value[3] != conv4_128_up.value[3]:
-            pad = (0, conv4_128_up.value[3] - conv3_128.value[3], 0, conv4_128_up.value[2] - conv3_128.value[2])
+            pad = (0, conv3_128.value[3] - conv4_128_up.value[3], 0, conv3_128.value[2] - conv4_128_up.value[2])
             conv4_128_up = F.pad(conv4_128_up, pad)
         conv3_fuse = self.conv3_fuse(conv3_128, conv4_128_up)
         conv3_fuse_final = self.conv3_fuse_final(conv3_fuse)

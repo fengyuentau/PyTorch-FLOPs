@@ -13,11 +13,11 @@ class YuFaceDetectNet(nn.Module):
         self.model5 = Conv_3layers(128, 256, 128, 256, 1)
         self.model6 = Conv_3layers(256, 256, 256, 256, 1)
 
-        self.pool1 = nn.MaxPool2d(2)
-        self.pool2 = nn.MaxPool2d(2)
-        self.pool3 = nn.MaxPool2d(2)
-        self.pool4 = nn.MaxPool2d(2)
-        self.pool5 = nn.MaxPool2d(2)
+        self.pool1 = nn.MaxPool2d(2, 2)
+        self.pool2 = nn.MaxPool2d(2, 2)
+        self.pool3 = nn.MaxPool2d(2, 2)
+        self.pool4 = nn.MaxPool2d(2, 2)
+        self.pool5 = nn.MaxPool2d(2,2 )
 
 
         self.loc, self.conf = self.multibox(self.num_classes)

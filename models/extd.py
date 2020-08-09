@@ -113,7 +113,7 @@ class EXTD(nn.Module):
 
     @property
     def name(self):
-        return self._get_name()
+        return self._get_name() + '-' + str(self.model_type)
 
 def conv_bn(inp, oup, stride, k_size=3):
     return nn.Sequential(

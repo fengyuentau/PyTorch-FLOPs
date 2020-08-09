@@ -17,7 +17,7 @@ class YuFaceDetectNet(nn.Module):
         self.pool2 = nn.MaxPool2d(2, 2)
         self.pool3 = nn.MaxPool2d(2, 2)
         self.pool4 = nn.MaxPool2d(2, 2)
-        self.pool5 = nn.MaxPool2d(2,2 )
+        self.pool5 = nn.MaxPool2d(2, 2)
 
 
         self.loc, self.conf = self.multibox(self.num_classes)

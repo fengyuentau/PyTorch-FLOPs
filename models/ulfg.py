@@ -90,7 +90,6 @@ class ULFG(nn.Module):
 
     @property
     def name(self):
-        print(self.backbone)
         return self._get_name() + '-' + self.mode
 
 

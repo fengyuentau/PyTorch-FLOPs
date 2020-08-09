@@ -12,13 +12,14 @@ from .hr import HR
 # from .light_dsfd import light_DSFD
 # from .retinaface import RetinaFace
 # from .yufacedetectnet import YuFaceDetectNet
-# from .extd import EXTD
+from .extd import EXTD
 # from .sfa import SFA
 # from .shf import SHF
 
 __all__ =[
     'Eval',
-    'CSP', 'DSFD', 'PyramidBox', 'SRN', 'S3FD', 'SSH', 'HR'
+    'CSP', 'DSFD', 'PyramidBox', 'SRN', 'S3FD', 'SSH', 'HR',
+    'EXTD'
     #'LFFD', 'FaceBoxes', 'ULFG', 'light_DSFD',
     #'RetinaFace', 'YuFaceDetectNet', 'EXTD', 'SFA', 'SHF'
 ]

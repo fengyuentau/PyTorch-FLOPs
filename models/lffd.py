@@ -134,7 +134,7 @@ class LFFDv1(nn.Module):
 
     @property
     def name(self):
-        return self._get_name() + 'v1'
+        return self._get_name()
 
 
 class LFFDv2(nn.Module):
@@ -200,7 +200,7 @@ class LFFDv2(nn.Module):
 
     @property
     def name(self):
-        return self._get_name() + 'v2'
+        return self._get_name()
 
 class LFFD(nn.Module):
     def __init__(self, version='v1'):
@@ -217,4 +217,4 @@ class LFFD(nn.Module):
 
     @property
     def name(self):
-        return self.modle.name
+        return self.model.name

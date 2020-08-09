@@ -1,18 +1,12 @@
-import os
-import sys
 import math
 import argparse
 
 import numpy as np
+from tqdm import tqdm
 
-import importlib
-
-sys.path.append('.')
+import eval_core
 import flops_counter
-import flops_counter.nn as nn
-
 import models
-
 from data import WIDERFace
 
 
@@ -39,10 +33,14 @@ def parseargs():
     parser.add_argument('--model',
                         default='CSP',
                         help='Evaluate the specified model.')
-    parser.add_argument('--multi_scale_testing',
+    parser.add_argument('--ms',
                         default=True,
                         type=str2bool,
-                        help='Evaluate in multi scales or a single scale 1.')
+                        help='Set to true to evaluate in multi scales or false to evaluate in single scale 1.')
+    parser.add_argument('--max_downsample',
+                        default=1,
+                        type=int,
+                        help='Make the input size dividable by given value due to model design.')
 
     args = parser.parse_args()
     return args
@@ -63,7 +61,7 @@ def to_scientific(flops):
     v = flops
     for i in range(rank * 10):
         v = v / 2
-    return '{} {}'.format(str(v), dim)
+    return '{:.4f} {}'.format(v, dim)
 
 def main(args):
     # build dataset
@@ -77,7 +75,7 @@ def main(args):
         version = _model[-1]
 
     available_models = [
-        'CSP',
+        'CSP', # NOTE: max_downsample must be 16
         'DSFD',
         'EXTD', # EXTD-32/48/64
         'FaceBoxes',
@@ -100,18 +98,19 @@ def main(args):
             break
 
     # build model
-    if model_name in ['EXTD', 'LFFD']:
-        model  = eval('models.'+model_name)(version)
-    else:
-        model  = eval('models.'+model_name)()
+    kwargs = [version] if version else []
+    model = eval('models.'+model_name)(*kwargs)
 
-    # flops_eval
-    mod = importlib.import_module('core.'+model_name.lower())
-    avg_flops = mod.flops_eval(dataset, model)
+    # calculate average flops
+    try:
+        eval_handle = eval('eval_core.'+model_name)(dataset, model, args.ms, args.max_downsample)
+    except:
+        eval_handle = eval_core.Eval(dataset, model, max_downsample=args.max_downsample)
+    avg_flops = eval_handle.test()
     print(avg_flops)
-    print('Average FLOPs: {}FLOPs'.format(to_scientific(avg_flops)))
-
-
+    print('Average FLOPs: {}FLOPs'.format(
+        to_scientific(avg_flops)
+    ))
 
 
 if __name__ == '__main__':
